@@ -1,14 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Mi Canal IPFS</title>
+  <meta charset="UTF-8">
+  <title>Mi Video en IPFS</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+    video {
+      width: 80%;
+      max-width: 1080px;
+      height: auto;
+      margin-top: 2rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>Mi video sin compresión en IPFS</h1>
-  <video controls width="720" height="405">
-    <source src="https://ipfs.io/ipfs/TU_CID_AQUI" type="video/mp4" />
-    Tu navegador no soporta el video.
+  <h1>Video sin compresión (IPFS)</h1>
+  <video controls>
+    <source src="https://ipfs.io/ipfs/QmR6NAaZxNjxcyL9q9tE82JJuT7VtcHRaRY57veQk74KBz" type="video/mp4">
+    Tu navegador no soporta videos HTML5.
   </video>
 </body>
 </html>
