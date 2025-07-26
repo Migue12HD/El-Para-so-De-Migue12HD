@@ -5,187 +5,63 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.6">
     <style>
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-        }
-        body {
-            background-color: black;
-            color: white;
-            font-family: 'Roboto', sans-serif;
-        }
-        header {
-            background: transparent;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header__logo a {
-            display: inline-block;
-            margin-right: 1rem;
-        }
-        .header__logo img {
-            height: 32px;
-        }
-        .search input {
-            width: 300px;
-            padding: 0.5rem;
-            border-radius: 2px;
-            border: none;
-        }
-        .search__icon {
-            height: 20px;
-            vertical-align: middle;
-            cursor: pointer;
-        }
-        .header__icons img {
-            height: 28px;
-            margin-left: 15px;
-            cursor: pointer;
-        }
-        .banner {
-            background: url('https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_banner.jpg') no-repeat center;
-            background-size: cover;
-            height: 240px;
-            margin-bottom: 0.75rem;
-        }
 
-        .profile-container {
-            text-align: right;
-            margin-bottom: 2rem;
-            padding-right: 2rem;
-        }
-        .profile-pic {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid white;
-        }
-        .profile-name {
-            font-size: 2rem;
-            font-weight: 900;
-            user-select: none;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            margin-top: -0.25rem;
-        }
+        
+    /* Actualiza tu CSS así */
+.profile-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-right: 2rem;
+}
+.profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+.profile-name {
+    font-size: 2rem;
+    font-weight: 900;
+    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    margin: 0;
+}
+.video-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.view-counter {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 0.25rem;
+    text-align: center;
+}
 
-        .wrapper {
-            max-width: 1200px;
-            margin: auto;
-            padding: 0 1rem 3rem 1rem;
-        }
-        .main-wrapper {
-            display: flex;
-            gap: 1.5rem;
-        }
-        main {
-            flex: 3;
-            color: white;
-        }
-        .left {
-            flex: 1;
-        }
-        .main__video-container iframe {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border: none;
-        }
-
-        .videos {
-            display: grid;
-            grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .video-card iframe {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border: none;
-            border-radius: 4px;
-        }
-
-        .view-counter {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-top: 0.25rem;
-            text-align: center;
-        }
-
-        aside.aside {
-            flex: 1;
-            max-width: 300px;
-            color: white;
-        }
+        
     </style>
 </head>
 <body>
-    <div class="wrapper">
+<div class="profile-container">
+    <img class="profile-pic" src="https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_profile.jpg" alt="Foto de perfil Migue12HD">
+    <div class="profile-name">Migue12HD</div>
+</div>
 
-        <header>
-            <div class="header__logo">
-                <a href="#"><img src="images/header/hamburger.png" alt="navigation button" class="header__hamburger-logo"></a>
-                <a href="#"><img src="images/header/yt-logo.png" alt="YouTube logo" class="header__yt-logo"></a>
-            </div>
-            <div class="search">
-                <form>
-                    <input type="text" name="search" id="search__input" placeholder="Search">
-                    <a href="#"><img src="images/header/search.png" alt="Search Icon" class="search__icon"></a>
-                </form>
-            </div>
-            <div class="header__icons header__logo">
-                <a href="#"><img src="images/header/grid.png" alt="grid icon" class="header__icons--grid"></a>
-                <a href="#"><img src="images/header/upload.png" alt="upload icon" class="header__icons--upload"></a>
-                <a href="#"><img src="images/header/bell.png" alt="bell icon" class="header__icons--bell"></a>
-                <a href="#"><img src="images/header/profile-placeholder.png" alt="profile icon" class="header__icons--profile"></a>
-            </div>
-        </header>
-
-        <div class="banner"></div>
-
-        <div class="profile-container">
-            <img class="profile-pic" src="https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_profile.jpg" alt="Foto de perfil Migue12HD">
-            <div class="profile-name">Migue12HD</div>
-        </div>
-
-        <div class="main-wrapper">
-            <div class="left"></div>
-
-            <main>
-                <div class="main__video">
-                    <div class="main__video-container">
-                        <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
-                    </div>
-                </div>
-
-                <section class="videos">
-                    <div class="video-card">
-                        <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
-                        <p class="view-counter">34,918 visualizaciones</p>
-                    </div>
-                    <div class="video-card">
-                        <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
-                        <p class="view-counter">21,483 visualizaciones</p>
-                    </div>
-                </section>
-            </main>
-
-            <aside class="aside">
-                <div class="aside__top-container">
-                    <p>Up next</p>
-                    <a href="#">AUTOPLAY</a>
-                </div>
-                <a href="#" class="first-img-aside">
-                    <img src="images/aside-pic.jpg" alt="Next video">
-                </a>
-                <a href="#"><img class="aside__video" src="images/aside-pic.jpg" alt="Next video"></a>
-                <div class="aside__more">
-                    <a href="#">SHOW MORE</a>
-                </div>
-            </aside>
-        </div>
+<section class="videos">
+    <div class="video-card">
+        <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+        <p class="view-counter">34,918 visualizaciones</p>
     </div>
+    <div class="video-card">
+        <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+        <p class="view-counter">21,483 visualizaciones</p>
+    </div>
+</section>
+
 </body>
 </html>
