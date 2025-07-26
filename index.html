@@ -15,14 +15,14 @@ body {
     font-family: 'Roboto', sans-serif;
 }
         
-.profile-container {
-    display: flex;
-    justify-content: flex-start; /* Alinea a la izquierda */
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    padding-left: 2rem;
-}
+    .profile-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+      margin-left: 2rem;
+      margin-top: -50px; /* ← MOVIENDO NOMBRE MÁS ARRIBA */
+    }
 
 .profile-pic {
     width: 80px;
@@ -71,16 +71,23 @@ body {
     <div class="profile-name">Migue12HD</div>
 </div>
 
-<section class="videos">
+ <!-- Sección de videos -->
+  <section class="videos">
     <div class="video-card">
-        <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
-        <p class="view-counter">34,918 visualizaciones</p>
+      <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+      <p class="view-counter">34,918 visualizaciones</p>
     </div>
     <div class="video-card">
-        <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
-        <p class="view-counter">21,483 visualizaciones</p>
+      <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+      <p class="view-counter">21,483 visualizaciones</p>
     </div>
-</section>
+  </section>
+
+  <!-- JavaScript para contar los videos -->
+  <script>
+    const totalVideos = document.querySelectorAll('.video-card').length;
+    document.getElementById('video-counter').textContent = `Vídeos subidos: ${totalVideos}`;
+  </script>
 
 </body>
 </html>
