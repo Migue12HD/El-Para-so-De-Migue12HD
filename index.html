@@ -77,28 +77,25 @@
             background-color: #aaa;
             color: black;
         }
-
+        
 .channel-nav {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding-top: 0.5rem;
-    min-width: 160px;
+    gap: 2.5rem;
+    padding-top: 1.2rem;
+    font-size: 1.1rem;
     user-select: none;
-    font-size: 1rem;
-}
-
-.channel-nav > div {
-    cursor: pointer;
-    padding: 8px 12px;
-    border-left: 4px solid transparent;
-    transition: border-color 0.2s, background-color 0.2s;
     color: #ccc;
 }
 
+.channel-nav > div {
+    cursor: default;
+    padding: 8px 0;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
 .channel-nav > div:hover {
-    border-left: 4px solid white;
-    background-color: #222;
+    border-bottom: 3px solid white;
     color: white;
 }
 
