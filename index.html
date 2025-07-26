@@ -1,62 +1,97 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Migue12HD</title>
+  <meta charset="UTF-8" />
+  <title>Migue12HD - Canal Clásico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <style>
-    body {
+    * {
       margin: 0;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
+      padding: 0;
+      box-sizing: border-box;
     }
-
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f9f9f9;
+      color: #111;
+    }
+    header {
+      background: #c4302b;
+      color: white;
+      padding: 1rem;
+    }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .profile-pic {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    header h1 {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 1.75rem;
+      user-select: none;
+      margin: 0;
+    }
     .banner {
       background: url('https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_banner.jpg') no-repeat center;
       background-size: cover;
       height: 240px;
+    }
+    .canal-info {
+      text-align: center;
+      padding: 1rem;
+    }
+    .videos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    iframe {
       width: 100%;
-    }
-
-    .channel-header {
-      display: flex;
-      align-items: center;
-      background: #202020;
-      padding: 12px 24px;
-      border-bottom: 1px solid #333;
-    }
-
-    .channel-header img {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-right: 16px;
-    }
-
-    .channel-header h1 {
-      font-size: 1.8rem;
-      margin: 0;
-    }
-
-    .content {
-      padding: 24px;
+      aspect-ratio: 16 / 9;
+      border: none;
     }
   </style>
 </head>
 <body>
+  <header>
+    <div class="header-container">
+      <img 
+        src="https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_profile.jpg" 
+        alt="Foto de perfil Migue12HD" 
+        class="profile-pic"
+      />
+      <h1>Migue12HD</h1>
+    </div>
+  </header>
 
   <div class="banner"></div>
 
-  <div class="channel-header">
-    <img src="https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_profile.jpg" alt="Foto de perfil">
-    <h1>Migue12HD</h1>
+  <div class="canal-info">
+    <h2>Videos sin compresión - Calidad pura</h2>
+    <p>Bienvenido al archivo real de mis videos.</p>
   </div>
 
-  <div class="content">
-    <p>Bienvenido a mi canal. Aquí van los vídeos sin compresión visual, directo como se ven en mi galería.</p>
-  </div>
+  <section class="videos">
+    <!-- Video 1 -->
+    <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
 
+    <!-- Duplicá este bloque si querés más videos -->
+    <!--
+    <iframe src="https://archive.org/embed/otrovideo" allowfullscreen></iframe>
+    -->
+  </section>
 </body>
 </html>
-
