@@ -85,6 +85,7 @@
     font-size: 1.1rem;
     user-select: none;
     color: #ccc;
+    padding-left: 0.25rem; /* Ajuste fino opcional */
 }
 
 .channel-nav > div {
@@ -133,20 +134,30 @@
 
     <div class="banner"></div>
 
-    <div class="profile-container">
-        <img
-            class="profile-pic"
-            src="https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_profile.jpg"
-            alt="Foto de perfil Migue12HD"
-        />
-        <div class="profile-text-container">
-            <h1 class="profile-name">Migue12HD</h1>
-            <div class="channel-info">
-                <span id="subs-count">0 suscriptores</span> &nbsp;•&nbsp; <span id="video-count">0 vídeos</span>
-            </div>
-            <button id="subscribe-btn">Suscribirse</button>
+<div class="profile-container">
+    <img
+        class="profile-pic"
+        src="https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_profile.jpg"
+        alt="Foto de perfil Migue12HD"
+    />
+
+    <!-- 👇 NAV insertado aquí, después de la imagen -->
+    <nav class="channel-nav" aria-label="Navegación del canal">
+        <div>Inicio</div>
+        <div>Vídeos</div>
+        <div>En directo</div>
+        <div>Listas</div>
+        <div>Sobre mí</div>
+    </nav>
+
+    <div class="profile-text-container">
+        <h1 class="profile-name">Migue12HD</h1>
+        <div class="channel-info">
+            <span id="subs-count">0 suscriptores</span> &nbsp;•&nbsp; <span id="video-count">0 vídeos</span>
         </div>
+        <button id="subscribe-btn">Suscribirse</button>
     </div>
+</div>
 
     <!-- NAV colocada justo antes de videos -->
     <nav class="channel-nav" aria-label="Navegación del canal">
