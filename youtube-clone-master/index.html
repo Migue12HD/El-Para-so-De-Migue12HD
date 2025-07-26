@@ -1,230 +1,209 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>YouTube</title>
-        <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="styles/reset.css">
-        <link rel="stylesheet" type="text/css" href="styles/main.css">
-        <meta name="viewport" content="width=device-width, initial-scale=0.6">
-    </head>
-    <body>
-        <div class="wrapper">
-            <header>
-                <div class="header__logo">
-                    <a href="#">
-                        <img src="images/header/hamburger.png" alt="navigation button" class="header__hamburger-logo">
-                    </a>
-                    <a href="#">
-                        <img src="images/header/yt-logo.png" alt="YouTube logo" class="header__yt-logo">
-                    </a>
-                </div>
-                <div class="search">
-                    <form>
-                        <input type="text" name="search" id="search__input" placeholder="Search">
-                        <a href="#">
-                            <img src="images/header/search.png" alt="Search Icon" class="search__icon">
-                        </a>
-                    </form>
-                </div>
-                <div class="header__icons header__logo">
-                    <a href="#">
-                        <img src="images/header/grid.png" alt="grid icon" class="header__icons--grid">
-                    </a>
-                    <a href="#">
-                        <img src="images/header/upload.png" alt="grid icon" class="header__icons--upload">
-                    </a>
-                    <a href="#">
-                        <img src="images/header/bell.png" alt="grid icon" class="header__icons--bell">
-                    </a>
-                    <a href="#">
-                        <img src="images/header/profile-placeholder.png" alt="grid icon" class="header__icons--profile">
-                    </a>
-                </div>
-            </header>
-            <div class="main-wrapper">
-                <div class="left"></div>
-                <main>
-                    <div class="main__video">
-                        <div class="main__video-container">
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/_1lj6JaDKCA" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                        <div class="main__description">
-                            <p>Steph Curry & DeMarcus Postgame Interview - Game 2 | Warriors vs Raptos | 2019 NBA Finals</p>
-                            <p>290,399 views</p>
-                            <a href="#">
-                                <img src="images/describe-icons.jpg" alt="describe-icons" >
-                            </a>
-                        </div>
-                        <div class="main__sub-description">
-                            <a href="#">
-                                <img class="main__name" src="images/describe-name.jpg" alt="name">
-                            </a>
-                            <a href="#">
-                                <img class="main__subscriptions" src="images/subscribed.jpg" alt="subscriptions">
-                            </a>
-                            <p>Stephen A. Smith gives his best sales pitch for Kevin Durant to sign with the New York Knicks ahead of 2019 NBA free agency, saying KD would get whatever he desired courtesy of James Dolan..</p>
-                        </div>
-                        <div class="main__more">
-                            <a href="#" >
-                                <p>SHOW MORE</p>
-                            </a>
-                        </div>
-                    </div>
-                    <aside class="aside">
-                        <div class="aside__top-container">
-                            <p>Up next</p>
-                            <a href="#">AUTOPLAY</a>
-                        </div>
-                        <a href="#" class="first-img-aside">
-                            <img src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                         <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <a href="#" >
-                            <img  class="aside__video" src="images/aside-pic.jpg" alt="Next video">
-                        </a>
-                        <div class="aside__more">
-                            <a href="#">SHOW MORE</a>
-                        </div>
-                    </aside>
+<html lang="es">
+<head>
+    <title>Migue12HD - Canal Clásico</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <style>
+        /* Reseteo básico (adaptar si tienes reset.css) */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+        body {
+            background-color: black;  /* Fondo negro */
+            color: white;
+            font-family: 'Roboto', sans-serif;
+        }
+        header {
+            background: transparent; /* Sin raya roja */
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header__logo a {
+            display: inline-block;
+            margin-right: 1rem;
+        }
+        .header__logo img {
+            height: 32px;
+        }
+        .search input {
+            width: 300px;
+            padding: 0.5rem;
+            border-radius: 2px;
+            border: none;
+        }
+        .search__icon {
+            height: 20px;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+        .header__icons img {
+            height: 28px;
+            margin-left: 15px;
+            cursor: pointer;
+        }
+        /* Banner */
+        .banner {
+            background: url('https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_banner.jpg') no-repeat center;
+            background-size: cover;
+            height: 240px;
+            margin-bottom: 0.75rem;
+        }
+        /* Foto y nombre debajo del banner */
+        .profile-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 0.5rem auto;
+            display: block;
+            border: 2px solid white;
+        }
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            user-select: none;
+        }
 
-                    <section>
-                        <div>
-                            <div class="section__comments">
-                                <p>6,806 Comments</p>
-                            </div>
-                            <div class="section__sort-container">
-                                <a href="#">
-                                    <img src="images/sort.jpg" alt="sort comments">
-                                    <p>SORT BY</p>
-                                </a>
-                            </div>
-                            <div class="section__profile">
-                                <img src="images/profile_icon.png" alt="profile_icon"> 
-                            </div>
-                            <div class="input__container">
-                                <form>
-                                    <input type="text" name="comment" id="comment" value="Add a public comment...">
-                                </form>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="comments">
-                                <img src="images/profile_icon.png" alt="profile icon" width="50">
-                                <p class="comments__name">John Snow <a href="#">10 months ago</a> </p>
-                                <p class="comments__comment">Stephen A will do anything he possibly can to get KD on the Knicks 😂.</p>
-                                <div class="likes">
-                                    <a href="#">
-                                        <img src="images/like.jpg" alt="like">
-                                    </a>
-                                    <p class="comments__text">1K</p>
-                                    <a href="#">
-                                        <img src="images/dislike.jpg" alt="dislike">
-                                    </a>
-                                    <a href="#" class="comments__text">REPLY</a>
-                                </div>
-                                <a href="#" class="comments_replies">View all 7 replies</a>
-                            </div>
-                            <div class="comments">
-                                <img src="images/profile_icon.png" alt="profile icon" width="50">
-                                <p class="comments__name">Arya Stark <a href="#">10 months ago</a> </p>
-                                <p class="comments__comment">Stephen A will do anything he possibly can to get KD on the Knicks 😂.</p>
-                                <div class="likes">
-                                    <a href="#">
-                                        <img src="images/like.jpg" alt="like">
-                                    </a>
-                                    <p class="comments__text">1K</p>
-                                    <a href="#">
-                                        <img src="images/dislike.jpg" alt="dislike">
-                                    </a>
-                                    <a href="#" class="comments__text">REPLY</a>
-                                </div>
-                                <a href="#" class="comments_replies">View all 7 replies</a>
-                            </div>
-                            <div class="comments">
-                                <img src="images/profile_icon.png" alt="profile icon" width="50">
-                                <p class="comments__name">Tyrion Lannister <a href="#">10 months ago</a> </p>
-                                <p class="comments__comment">Stephen A will do anything he possibly can to get KD on the Knicks 😂.</p>
-                                <div class="likes">
-                                    <a href="#">
-                                        <img src="images/like.jpg" alt="like">
-                                    </a>
-                                    <p class="comments__text">1K</p>
-                                    <a href="#">
-                                        <img src="images/dislike.jpg" alt="dislike">
-                                    </a>
-                                    <a href="#" class="comments__text">REPLY</a>
-                                </div>
-                                <a href="#" class="comments_replies">View all 7 replies</a>
-                            </div>
-                            <div class="comments">
-                                <img src="images/profile_icon.png" alt="profile icon" width="50">
-                                <p class="comments__name">Mark Snow <a href="#">10 months ago</a> </p>
-                                <p class="comments__comment">Stephen A will do anything he possibly can to get KD on the Knicks 😂.</p>
-                                <div class="likes">
-                                    <a href="#">
-                                        <img src="images/like.jpg" alt="like">
-                                    </a>
-                                    <p class="comments__text">1K</p>
-                                    <a href="#">
-                                        <img src="images/dislike.jpg" alt="dislike">
-                                    </a>
-                                    <a href="#" class="comments__text">REPLY</a>
-                                </div>
-                                <a href="#" class="comments_replies">View all 7 replies</a>
-                            </div>
-                            <div class="comments">
-                                <img src="images/profile_icon.png" alt="profile icon" width="50">
-                                <p class="comments__name">Lord Varys <a href="#">10 months ago</a> </p>
-                                <p class="comments__comment">Stephen A will do anything he possibly can to get KD on the Knicks 😂.</p>
-                                <div class="likes">
-                                    <a href="#">
-                                        <img src="images/like.jpg" alt="like">
-                                    </a>
-                                    <p class="comments__text">1K</p>
-                                    <a href="#">
-                                        <img src="images/dislike.jpg" alt="dislike">
-                                    </a>
-                                    <a href="#" class="comments__text">REPLY</a>
-                                </div>
-                                <a href="#" class="comments_replies">View all 7 replies</a>
-                            </div>
-                        </div>
-                    </section>
+        /* Main layout */
+        .wrapper {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 1rem 3rem 1rem;
+        }
+        .main-wrapper {
+            display: flex;
+            gap: 1.5rem;
+        }
+        main {
+            flex: 3;
+            color: white;
+        }
+        .left {
+            flex: 1;
+        }
 
-                </main>
+        /* Video principal */
+        .main__video-container iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: none;
+        }
+
+        /* Videos relacionados */
+        .videos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .videos iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Aside y comentarios se mantienen sin cambio visual para simplificar */
+        aside.aside {
+            flex: 1;
+            max-width: 300px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+
+        <header>
+            <div class="header__logo">
+                <a href="#">
+                    <img src="images/header/hamburger.png" alt="navigation button" class="header__hamburger-logo">
+                </a>
+                <a href="#">
+                    <img src="images/header/yt-logo.png" alt="YouTube logo" class="header__yt-logo">
+                </a>
             </div>
+            <div class="search">
+                <form>
+                    <input type="text" name="search" id="search__input" placeholder="Search">
+                    <a href="#">
+                        <img src="images/header/search.png" alt="Search Icon" class="search__icon">
+                    </a>
+                </form>
+            </div>
+            <div class="header__icons header__logo">
+                <a href="#">
+                    <img src="images/header/grid.png" alt="grid icon" class="header__icons--grid">
+                </a>
+                <a href="#">
+                    <img src="images/header/upload.png" alt="upload icon" class="header__icons--upload">
+                </a>
+                <a href="#">
+                    <img src="images/header/bell.png" alt="bell icon" class="header__icons--bell">
+                </a>
+                <a href="#">
+                    <img src="images/header/profile-placeholder.png" alt="profile icon" class="header__icons--profile">
+                </a>
+            </div>
+        </header>
+
+        <!-- Banner -->
+        <div class="banner"></div>
+
+        <!-- Foto y nombre -->
+        <div class="profile-container">
+            <img class="profile-pic" src="https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_profile.jpg" alt="Foto de perfil Migue12HD">
+            <div class="profile-name">Migue12HD</div>
         </div>
-    </body>
+
+        <div class="main-wrapper">
+            <div class="left"></div>
+
+            <main>
+                <!-- Video principal: reemplazado por iframe archive.org -->
+                <div class="main__video">
+                    <div class="main__video-container">
+                        <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <!-- Galería de videos estilo YouTube en grid -->
+                <section class="videos">
+                    <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+                    <!-- Más videos: duplica el iframe con las URLs que quieras -->
+                    <!--
+                    <iframe src="https://archive.org/embed/otrovideo" allowfullscreen></iframe>
+                    -->
+                </section>
+
+                <!-- El resto del contenido (comentarios, aside, etc) puedes añadirlo aquí si quieres -->
+            </main>
+
+            <!-- Sidebar (videos relacionados, etc) -->
+            <aside class="aside">
+                <div class="aside__top-container">
+                    <p>Up next</p>
+                    <a href="#">AUTOPLAY</a>
+                </div>
+                <a href="#" class="first-img-aside">
+                    <img src="images/aside-pic.jpg" alt="Next video">
+                </a>
+                <a href="#">
+                    <img class="aside__video" src="images/aside-pic.jpg" alt="Next video">
+                </a>
+                <!-- Más elementos -->
+                <div class="aside__more">
+                    <a href="#">SHOW MORE</a>
+                </div>
+            </aside>
+        </div>
+    </div>
+</body>
 </html>
