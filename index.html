@@ -6,67 +6,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=0.6">
     <style>
         body {
-            background-color: black;
+            background-color: black;  /* Fondo negro */
             color: white;
             font-family: 'Roboto', sans-serif;
             margin: 0;
+            padding: 0;
         }
 
         .banner {
             background: url('https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_banner.jpg') no-repeat center;
             background-size: cover;
             height: 240px;
+            margin-bottom: 1rem;
         }
 
         .profile-container {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 1rem;
-            padding: 1.5rem 2rem 1rem 2rem;
+            margin-bottom: 1rem;
+            padding: 0 2rem;
         }
 
         .profile-pic {
-            width: 80px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid white;
-        }
-
-        .profile-info {
-            display: flex;
-            flex-direction: column;
+            flex-shrink: 0;
         }
 
         .profile-name {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 900;
+            user-select: none;
             text-transform: uppercase;
             letter-spacing: -1px;
             margin: 0;
         }
 
-        .counters {
-            font-size: 0.95rem;
-            color: #aaa;
-            margin-top: 0.4rem;
+        /* Contenedor para subs y videos */
+        .channel-info {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            user-select: none;
+            letter-spacing: 0.5px;
         }
 
+        /* Botón suscribirse debajo */
+        #subscribe-btn {
+            display: block;
+            margin: 0 auto 2rem auto;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s ease;
+            min-width: 150px;
+        }
+
+        #subscribe-btn.subscribed {
+            background-color: #aaa;
+            color: black;
+        }
+
+        /* Videos */
         .videos {
-            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
         }
 
         .video-card {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 1rem;
         }
 
-        .video-card iframe {
+        iframe {
             width: 100%;
-            max-width: 560px;
-            height: 315px;
+            aspect-ratio: 16 / 9;
             border: none;
         }
 
@@ -75,7 +104,9 @@
             color: #aaa;
             margin-top: 0.25rem;
             text-align: center;
+            user-select: none;
         }
+
     </style>
 </head>
 <body>
@@ -83,20 +114,18 @@
     <!-- Banner -->
     <div class="banner"></div>
 
-    <!-- Perfil -->
     <div class="profile-container">
         <img class="profile-pic" src="https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_profile.jpg" alt="Foto de perfil Migue12HD">
-        <div class="profile-info">
-            <div class="profile-name">Migue12HD</div>
-<div class="counters">
-    <span id="subs-count">0 suscriptores</span> &nbsp;•&nbsp;
-    <span id="video-count">0 vídeos</span>
-</div>
-        </div>
+        <h1 class="profile-name">Migue12HD</h1>
     </div>
 
-    <!-- Videos -->
-    <section class="videos" id="video-section">
+    <div class="channel-info">
+        <span id="subs-count">0 suscriptores</span> &nbsp;•&nbsp; <span id="video-count">0 vídeos</span>
+    </div>
+
+    <button id="subscribe-btn">Suscribirse</button>
+
+    <section class="videos">
         <div class="video-card">
             <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
             <p class="view-counter">34,918 visualizaciones</p>
@@ -109,8 +138,26 @@
 
     <script>
         // Contador automático de vídeos
-        const videos = document.querySelectorAll('.video-card').length;
-        document.getElementById('video-count').textContent = `nº vídeos: ${videos}`;
+        const videoCount = document.querySelectorAll('.video-card').length;
+        document.getElementById('video-count').textContent = `${videoCount} vídeos`;
+
+        // Lógica de suscripción
+        let subscribed = false;
+        let subsCount = 0;
+
+        const subsText = document.getElementById('subs-count');
+        const subBtn = document.getElementById('subscribe-btn');
+
+        subBtn.addEventListener('click', () => {
+            subscribed = !subscribed;
+
+            subsCount += subscribed ? 1 : -1;
+            subsCount = Math.max(subsCount, 0); // nunca menos de 0
+
+            subsText.textContent = `${subsCount} suscriptores`;
+            subBtn.textContent = subscribed ? 'Suscrito' : 'Suscribirse';
+            subBtn.classList.toggle('subscribed', subscribed);
+        });
     </script>
 
 </body>
