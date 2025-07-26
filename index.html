@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Migue12HD - Canal Clásico</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <style>
     * {
       margin: 0;
@@ -19,7 +19,27 @@
       background: #c4302b;
       color: white;
       padding: 1rem;
-      text-align: center;
+    }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .profile-pic {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    header h1 {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 1.75rem;
+      user-select: none;
+      margin: 0;
     }
     .banner {
       background: url('https://via.placeholder.com/1280x240/333/fff?text=Banner+del+Canal') no-repeat center;
@@ -47,14 +67,21 @@
 </head>
 <body>
   <header>
-    <h1>Migue12HD</h1>
+    <div class="header-container">
+      <img 
+        src="https://via.placeholder.com/48" 
+        alt="Foto de perfil Migue12HD" 
+        class="profile-pic"
+      />
+      <h1>Migue12HD</h1>
+    </div>
   </header>
 
   <div class="banner"></div>
 
   <div class="canal-info">
     <h2>Videos sin compresión - Calidad pura</h2>
-    <p>Bienvenido al archivo real de mis videos. Sin recortes, sin compresión, sin bullshit.</p>
+    <p>Bienvenido al archivo real de mis videos.</p>
   </div>
 
   <section class="videos">
