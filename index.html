@@ -20,7 +20,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Contenedor principal perfil */
         .profile-container {
             display: flex;
             align-items: flex-start;
@@ -38,11 +37,10 @@
             flex-shrink: 0;
         }
 
-        /* Contenedor texto nombre + subs+videos + boton */
         .profile-text-container {
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* izquierda */
+            align-items: flex-start;
         }
 
         .profile-name {
@@ -108,6 +106,32 @@
             text-align: center;
             user-select: none;
         }
+
+        /* Nuevo bloque de categorías debajo */
+
+        .channel-nav {
+            max-width: 1200px;
+            margin: 0 auto 3rem auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+            font-size: 1.1rem;
+            user-select: none;
+            color: #ccc;
+        }
+
+        .channel-nav > div {
+            cursor: default; /* Solo texto, no enlaces aún */
+            padding: 6px 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .channel-nav > div:hover {
+            border-bottom: 2px solid white;
+            color: white;
+        }
+
     </style>
 </head>
 <body>
@@ -140,6 +164,15 @@
         </div>
     </section>
 
+    <!-- BLOQUE NUEVO -->
+    <nav class="channel-nav" aria-label="Navegación del canal">
+        <div>Inicio</div>
+        <div>Vídeos</div>
+        <div>En directo</div>
+        <div>Listas</div>
+        <div>Sobre mí</div>
+    </nav>
+
     <script>
         // Contador automático de vídeos
         const videoCount = document.querySelectorAll('.video-card').length;
@@ -156,7 +189,7 @@
             subscribed = !subscribed;
 
             subsCount += subscribed ? 1 : -1;
-            subsCount = Math.max(subsCount, 0); // nunca menos de 0
+            subsCount = Math.max(subsCount, 0);
 
             subsText.textContent = `${subsCount} suscriptores`;
             subBtn.textContent = subscribed ? 'Suscrito' : 'Suscribirse';
