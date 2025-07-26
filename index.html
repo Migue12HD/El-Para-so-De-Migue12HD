@@ -2,31 +2,70 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Mi Video en IPFS</title>
+  <title>Migue12HD - Canal Clásico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
-      font-family: sans-serif;
-      background: #111;
+      font-family: 'Roboto', sans-serif;
+      background: #f9f9f9;
+      color: #111;
+    }
+    header {
+      background: #c4302b;
       color: white;
+      padding: 1rem;
       text-align: center;
+    }
+    .banner {
+      background: url('https://via.placeholder.com/1280x240/333/fff?text=Banner+del+Canal') no-repeat center;
+      background-size: cover;
+      height: 240px;
+    }
+    .canal-info {
+      text-align: center;
+      padding: 1rem;
+    }
+    .videos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
       padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
     }
     iframe {
-      width: 80%;
-      max-width: 1080px;
-      height: 540px;
+      width: 100%;
+      aspect-ratio: 16 / 9;
       border: none;
-      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
-  <h1>Video sin compresión (IPFS)</h1>
-  <iframe 
-    src="https://archive.org/embed/deluxesonic.f-571" 
-    webkitallowfullscreen="true" 
-    mozallowfullscreen="true" 
-    allowfullscreen>
-  </iframe>
+  <header>
+    <h1>Migue12HD</h1>
+  </header>
+
+  <div class="banner"></div>
+
+  <div class="canal-info">
+    <h2>Videos sin compresión - Calidad pura</h2>
+    <p>Bienvenido al archivo real de mis videos. Sin recortes, sin compresión, sin bullshit.</p>
+  </div>
+
+  <section class="videos">
+    <!-- Video 1 -->
+    <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+
+    <!-- Podés duplicar estos bloques para más videos -->
+    <!--
+    <iframe src="https://archive.org/embed/otrovideo" allowfullscreen></iframe>
+    -->
+  </section>
 </body>
 </html>
+
