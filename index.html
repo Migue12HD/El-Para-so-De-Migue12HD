@@ -78,33 +78,29 @@
             color: black;
         }
 
-        /* Barra de navegación justo encima de videos */
-        .channel-nav {
-            width: 100%;
-            max-width: 1200px;
-            margin: 1rem auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between; /* Espacio equitativo */
-            font-size: 1.1rem;
-            user-select: none;
-            color: #ccc;
-            border-bottom: 1px solid #333;
-        }
+.channel-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    min-width: 160px;
+    user-select: none;
+    font-size: 1rem;
+}
 
-        .channel-nav > div {
-            cursor: default; /* solo texto por ahora */
-            padding: 10px 0;
-            border-bottom: 3px solid transparent;
-            transition: border-color 0.3s ease;
-            flex: 1; /* que cada item ocupe espacio igual */
-            text-align: center;
-        }
+.channel-nav > div {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-left: 4px solid transparent;
+    transition: border-color 0.2s, background-color 0.2s;
+    color: #ccc;
+}
 
-        .channel-nav > div:hover {
-            border-bottom: 3px solid white;
-            color: white;
-        }
+.channel-nav > div:hover {
+    border-left: 4px solid white;
+    background-color: #222;
+    color: white;
+}
 
         .videos {
             max-width: 1200px;
