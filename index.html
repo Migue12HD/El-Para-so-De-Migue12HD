@@ -45,12 +45,20 @@
   </div>
 
   <script>
-    const canalID = 'UCZBGC0LzM6HVEZUyL6G94Tg'; // Tu canal
-    const apiKey = 'AIzaSyCdKHemz3i-lZbG62pPwyPnjT0eux9Aro0'; // Reemplaza con tu clave real
+    const canalID = 'UCZBGC0LzM6HVEZUyL6G94Tg'; // ID del canal de YouTube
+    const apiKey = 'AIzaSyC9ZxG9lYqb7HYY4gmSYDhA4ppeZuLkkTs'; // Clave nueva
 
-    fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,brandingSettings&id=${canalID}&key=${apiKey}`)
-      .then(res => res.json())
+    const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,brandingSettings&id=${canalID}&key=${apiKey}`;
+
+    fetch(url)
+      .then(res => {
+        if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
+        return res.json();
+      })
       .then(data => {
+        if (!data.items || data.items.length === 0) {
+          throw new Error("Canal no encontrado o sin acceso");
+        }
         const canal = data.items[0];
         document.getElementById('nombre').textContent = canal.snippet.title;
         document.getElementById('avatar').src = canal.snippet.thumbnails.high.url;
