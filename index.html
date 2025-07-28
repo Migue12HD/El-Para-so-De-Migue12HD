@@ -135,10 +135,12 @@
 </head>
 <body>
 
-    <!-- Banner dinámico -->
+<!-- Banner dinámico -->
+    
     <div class="banner" id="banner"></div>
 
-    <!-- Perfil -->
+<!-- Perfil -->
+    
     <div class="profile-container">
         <img
             class="profile-pic"
@@ -155,7 +157,8 @@
         </div>
     </div>
 
-    <!-- Navegación -->
+<!-- Navegación -->
+    
     <nav class="channel-nav" aria-label="Navegación del canal">
         <div>Inicio</div>
         <div>Vídeos</div>
@@ -164,7 +167,8 @@
         <div>Sobre mí</div>
     </nav>
 
-    <!-- Videos -->
+<!-- Videos -->
+    
     <section class="videos" id="videos-section">
         <div class="video-card">
             <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
@@ -201,7 +205,8 @@
             subscribeBtn.classList.toggle('subscribed', subscribed);
         });
 
-        // Fetch datos canal
+// Fetch datos canal.
+        
         fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey}`)
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP error ${response.status}`);
@@ -235,7 +240,8 @@
 
 // Vídeos de mi canal.
         
-        fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${UC72clDqtrpYOpQT5eUriGfw}&key=${AIzaSyC9ZxG9lYqb7HYY4gmSYDhA4ppeZuLkkTs}`)
+// Paso 1: obtener la ID de la playlist de "uploads"
+fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${canalID}&key=${apiKey}`)
   .then(res => {
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     return res.json();
@@ -256,7 +262,7 @@
     if (!data.items) throw new Error('No se encontraron videos');
 
     const videosSection = document.getElementById('videos-section');
-    videosSection.innerHTML = ''; // Limpiar videos estáticos
+    videosSection.innerHTML = ''; // Limpiar videos previos
 
     data.items.forEach(item => {
       const videoId = item.snippet.resourceId.videoId;
@@ -271,7 +277,7 @@
 
       const viewCounter = document.createElement('p');
       viewCounter.classList.add('view-counter');
-      viewCounter.textContent = title; // Aquí solo pongo el título. Para views necesitas otra llamada (más compleja).
+      viewCounter.textContent = title;
 
       videoCard.appendChild(iframe);
       videoCard.appendChild(viewCounter);
