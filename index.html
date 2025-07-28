@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+Tú dijiste:
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -103,37 +112,24 @@
             color: white;
         }
 
-#videos-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-  padding: 2rem;
-}
+    #videos-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .video-card iframe {
+      width: 100%;
+      height: 180px;
+      border: none;
+    }
 
-.video-card {
-  background-color: #1c1c1c;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.video-card iframe {
-  width: 100%;
-  height: 180px;
-  border: none;
-  border-radius: 6px;
-}
-
-.video-title {
-  font-size: 1rem;
-  color: #ddd;
-  margin-top: 0.5rem;
-  text-align: center;
-  user-select: none;
-}
+        .view-counter {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 0.25rem;
+            text-align: center;
+            user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -182,16 +178,16 @@
     const apiKey = 'AIzaSyC9ZxG9lYqb7HYY4gmSYDhA4ppeZuLkkTs';
     const canalID = 'UC72clDqtrpYOpQT5eUriGfw'; // Este es tu canal
 
-    fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${canalID}&key=${apiKey}`)
+    fetch(https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${canalID}&key=${apiKey})
       .then(res => res.json())
       .then(data => {
         const uploadsPlaylistId = data.items[0].contentDetails.relatedPlaylists.uploads;
-        return fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=10&key=${apiKey}`);
+        return fetch(https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=10&key=${apiKey});
       })
       .then(res => res.json())
       .then(data => {
         const videoIds = data.items.map(item => item.snippet.resourceId.videoId).join(',');
-        return fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&id=${videoIds}&key=${apiKey}`);
+        return fetch(https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&id=${videoIds}&key=${apiKey});
       })
       .then(res => res.json())
       .then(data => {
@@ -214,15 +210,15 @@
           videoCard.classList.add('video-card');
 
           const iframe = document.createElement('iframe');
-          iframe.src = `https://www.youtube.com/embed/${videoId}`;
+          iframe.src = https://www.youtube.com/embed/${videoId};
           iframe.setAttribute('allowfullscreen', '');
 
-    const titleText = document.createElement('p');
-    titleText.classList.add('video-title');
-    titleText.textContent = title;
+          const viewCounter = document.createElement('p');
+          viewCounter.classList.add('view-counter');
+          viewCounter.textContent = title;
 
-    videoCard.appendChild(iframe);
-    videoCard.appendChild(titleText);
+          videoCard.appendChild(iframe);
+          videoCard.appendChild(viewCounter);
 
           videosSection.appendChild(videoCard);
         });
