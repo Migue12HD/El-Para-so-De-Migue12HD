@@ -241,10 +241,10 @@
 // VÍDEOS
 // VÍDEOS
 
-    const videosContainer = document.getElementById('videos-container');
+const videosContainer = document.getElementById('videos-container');
 
 function cargarVideos() {
-    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=12&type=video`)
+    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalId}&part=snippet,id&order=date&maxResults=12&type=video`)
         .then(res => res.json())
         .then(data => {
             const videoIds = data.items
