@@ -168,17 +168,6 @@
     </nav>
 
 <!-- Videos -->
-    
-    <section class="videos" id="videos-section">
-        <div class="video-card">
-            <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
-            <p class="view-counter">34,918 visualizaciones</p>
-        </div>
-        <div class="video-card">
-            <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
-            <p class="view-counter">21,483 visualizaciones</p>
-        </div>
-    </section>
 
     <script>
         const canalID = 'UC72clDqtrpYOpQT5eUriGfw'; // Cambiar por el ID real
@@ -238,7 +227,7 @@
                 profileName.textContent = 'Error al cargar canal';
             });
 
-// Vídeos de mi canal.
+// ------ VÍDEOS DEL CANAL ------.
         
 // Paso 1: obtener la ID de la playlist de "uploads"
 fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`)
