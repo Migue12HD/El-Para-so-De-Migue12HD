@@ -241,24 +241,24 @@
 // VÍDEOS
 // VÍDEOS
 
-const videosContainer = document.getElementById('videos-container');
+const videosContainer = document.getElementById('videos-section');
 
 function cargarVideos() {
-    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalId}&part=snippet,id&order=date&maxResults=12&type=video`)
+    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet,id&order=date&maxResults=12&type=video`)
         .then(res => res.json())
         .then(data => {
             const videoIds = data.items
                 .map(item => item.id.videoId)
-                .filter(id => id); // asegúrate de que no haya undefined
+                .filter(id => id); // filtra undefined
 
-            return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,contentDetails,liveStreamingDetails&maxResults=12&id=${videoIds.join(',')}`);
+            return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,contentDetails,liveStreamingDetails&id=${videoIds.join(',')}`);
         })
         .then(res => res.json())
         .then(videoData => {
-            videosContainer.innerHTML = ''; // Limpiar por si ya había contenido
+            videosContainer.innerHTML = ''; // limpia
 
             videoData.items
-                .filter(video => video.snippet.liveBroadcastContent === "none") // ❌ Excluir directos o estrenos
+                .filter(video => video.snippet.liveBroadcastContent === "none") // solo videos normales
                 .forEach(video => {
                     const videoId = video.id;
                     const title = video.snippet.title;
@@ -267,8 +267,8 @@ function cargarVideos() {
                     const videoElement = document.createElement('div');
                     videoElement.classList.add('video-card');
                     videoElement.innerHTML = `
-                        <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">
-                            <img src="${thumbnail}" alt="${title}">
+                        <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer">
+                            <img src="${thumbnail}" alt="${title}" />
                             <h3>${title}</h3>
                         </a>
                     `;
