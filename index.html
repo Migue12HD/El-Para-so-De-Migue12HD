@@ -241,32 +241,32 @@
 // Vídeos de mi canal.
         
 // Paso 1: obtener la ID de la playlist de "uploads"
-fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${canalID}&key=${apiKey}`)
-  .then(res => {
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-    return res.json();
-  })
+fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`)
+  .then(res => res.json())
   .then(data => {
-    if (!data.items || data.items.length === 0) throw new Error('No se encontró el canal');
-
     const uploadsPlaylistId = data.items[0].contentDetails.relatedPlaylists.uploads;
 
-    // Paso 2: pedir últimos vídeos de esa playlist
-    return fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=6&key=${apiKey}`);
+    return fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=10&key=${apiKey}`);
   })
-  .then(res => {
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-    return res.json();
-  })
+  .then(res => res.json())
   .then(data => {
-    if (!data.items) throw new Error('No se encontraron videos');
+    const videoIds = data.items.map(item => item.snippet.resourceId.videoId).join(',');
 
+    return fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&key=${apiKey}&id=${videoIds}`);
+  })
+  .then(res => res.json())
+  .then(data => {
     const videosSection = document.getElementById('videos-section');
-    videosSection.innerHTML = ''; // Limpiar videos previos
+    videosSection.innerHTML = '';
 
-    data.items.forEach(item => {
-      const videoId = item.snippet.resourceId.videoId;
-      const title = item.snippet.title;
+    // Filtrar solo los vídeos normales
+    const normalVideos = data.items.filter(video => {
+      return video.snippet.liveBroadcastContent === 'none';
+    });
+
+    normalVideos.forEach(video => {
+      const videoId = video.id;
+      const title = video.snippet.title;
 
       const videoCard = document.createElement('div');
       videoCard.classList.add('video-card');
@@ -286,9 +286,9 @@ fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${c
     });
   })
   .catch(error => {
-    console.error('Error cargando videos recientes:', error);
+    console.error('Error cargando videos normales:', error);
   });
-
+        
     </script>
     
 </body>
