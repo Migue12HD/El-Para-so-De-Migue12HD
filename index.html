@@ -236,6 +236,53 @@
             console.error('Error al cargar datos del canal:', error);
             profileName.textContent = 'Error al cargar canal';
         });
+
+// VÍDEOS
+// VÍDEOS
+// VÍDEOS
+
+    const videosContainer = document.getElementById('videos-container');
+
+function cargarVideos() {
+    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=12&type=video`)
+        .then(res => res.json())
+        .then(data => {
+            const videoIds = data.items
+                .map(item => item.id.videoId)
+                .filter(id => id); // asegúrate de que no haya undefined
+
+            return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,contentDetails,liveStreamingDetails&maxResults=12&id=${videoIds.join(',')}`);
+        })
+        .then(res => res.json())
+        .then(videoData => {
+            videosContainer.innerHTML = ''; // Limpiar por si ya había contenido
+
+            videoData.items
+                .filter(video => video.snippet.liveBroadcastContent === "none") // ❌ Excluir directos o estrenos
+                .forEach(video => {
+                    const videoId = video.id;
+                    const title = video.snippet.title;
+                    const thumbnail = video.snippet.thumbnails.medium.url;
+
+                    const videoElement = document.createElement('div');
+                    videoElement.classList.add('video-card');
+                    videoElement.innerHTML = `
+                        <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">
+                            <img src="${thumbnail}" alt="${title}">
+                            <h3>${title}</h3>
+                        </a>
+                    `;
+                    videosContainer.appendChild(videoElement);
+                });
+        })
+        .catch(err => {
+            console.error('Error cargando vídeos:', err);
+            videosContainer.innerHTML = '<p>Error al cargar vídeos.</p>';
+        });
+}
+
+cargarVideos();
+    
 </script>
 
 </body>
