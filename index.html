@@ -237,24 +237,31 @@ function cargarVideos() {
   fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet,id&order=date&maxResults=12&type=video`)
     .then(res => res.json())
     .then(data => {
-      // Filtrar videos normales (liveBroadcastContent === "none")
+      // Filtrar los videos que no sean directos ni estrenos (liveBroadcastContent === "none")
       const videosFiltrados = data.items.filter(item => item.snippet.liveBroadcastContent === "none");
-      
       if (videosFiltrados.length === 0) {
         document.getElementById('videos-section').innerHTML = '<p>No hay vídeos normales disponibles.</p>';
         return;
       }
-      
+
       const videoIds = videosFiltrados.map(item => item.id.videoId).join(',');
 
-      return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet&id=${videoIds}`);
+      return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,liveStreamingDetails&id=${videoIds}`);
     })
     .then(res => res.json())
     .then(videoData => {
       const container = document.getElementById('videos-section');
       container.innerHTML = '';
 
-      videoData.items.forEach(video => {
+      // Aquí filtro videos que tengan liveStreamingDetails (que serían directos o estrenos)
+      const videosNormales = videoData.items.filter(video => !video.liveStreamingDetails);
+
+      if (videosNormales.length === 0) {
+        container.innerHTML = '<p>No hay vídeos normales disponibles.</p>';
+        return;
+      }
+
+      videosNormales.forEach(video => {
         const videoId = video.id;
         const title = video.snippet.title;
         const thumbnail = video.snippet.thumbnails.medium.url;
