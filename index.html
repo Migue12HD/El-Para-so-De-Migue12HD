@@ -232,6 +232,58 @@
                 console.error('Error al cargar datos del canal:', error);
                 profileName.textContent = 'Error al cargar canal';
             });
+
+// Vídeos de mi canal.
+        
+        fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${UC72clDqtrpYOpQT5eUriGfw}&key=${AIzaSyC9ZxG9lYqb7HYY4gmSYDhA4ppeZuLkkTs}`)
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    return res.json();
+  })
+  .then(data => {
+    if (!data.items || data.items.length === 0) throw new Error('No se encontró el canal');
+
+    const uploadsPlaylistId = data.items[0].contentDetails.relatedPlaylists.uploads;
+
+    // Paso 2: pedir últimos vídeos de esa playlist
+    return fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=6&key=${apiKey}`);
+  })
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    return res.json();
+  })
+  .then(data => {
+    if (!data.items) throw new Error('No se encontraron videos');
+
+    const videosSection = document.getElementById('videos-section');
+    videosSection.innerHTML = ''; // Limpiar videos estáticos
+
+    data.items.forEach(item => {
+      const videoId = item.snippet.resourceId.videoId;
+      const title = item.snippet.title;
+
+      const videoCard = document.createElement('div');
+      videoCard.classList.add('video-card');
+
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${videoId}`;
+      iframe.setAttribute('allowfullscreen', '');
+
+      const viewCounter = document.createElement('p');
+      viewCounter.classList.add('view-counter');
+      viewCounter.textContent = title; // Aquí solo pongo el título. Para views necesitas otra llamada (más compleja).
+
+      videoCard.appendChild(iframe);
+      videoCard.appendChild(viewCounter);
+
+      videosSection.appendChild(videoCard);
+    });
+  })
+  .catch(error => {
+    console.error('Error cargando videos recientes:', error);
+  });
+
     </script>
+    
 </body>
 </html>
