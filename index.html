@@ -135,12 +135,10 @@
 </head>
 <body>
 
-<!-- Banner dinámico -->
-    
+    <!-- Banner dinámico -->
     <div class="banner" id="banner"></div>
 
-<!-- Perfil -->
-    
+    <!-- Perfil -->
     <div class="profile-container">
         <img
             class="profile-pic"
@@ -149,16 +147,15 @@
             alt="Foto de perfil Migue12HD"
         />
         <div class="profile-text-container">
-            <h1 class="profile-name" id="profile-name">Migue</h1>
+            <h1 class="profile-name" id="profile-name">Cargando...</h1>
             <div class="channel-info">
                 <span id="subs-count">0 suscriptores</span> &nbsp;•&nbsp; <span id="video-count">0 vídeos</span>
             </div>
-            <button id="subscribe-btn">Suscribirme</button>
+            <button id="subscribe-btn">Suscribirse</button>
         </div>
     </div>
 
-<!-- Navegación -->
-    
+    <!-- Navegación -->
     <nav class="channel-nav" aria-label="Navegación del canal">
         <div>Inicio</div>
         <div>Vídeos</div>
@@ -167,9 +164,17 @@
         <div>Sobre mí</div>
     </nav>
 
-<div id="videos-section"></div>
-    
-<!-- Videos -->
+    <!-- Videos -->
+    <section class="videos" id="videos-section">
+        <div class="video-card">
+            <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+            <p class="view-counter">34,918 visualizaciones</p>
+        </div>
+        <div class="video-card">
+            <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+            <p class="view-counter">21,483 visualizaciones</p>
+        </div>
+    </section>
 
     <script>
         const canalID = 'UC72clDqtrpYOpQT5eUriGfw'; // Cambiar por el ID real
@@ -196,8 +201,7 @@
             subscribeBtn.classList.toggle('subscribed', subscribed);
         });
 
-// Fetch datos canal.
-        
+        // Fetch datos canal
         fetch(https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey})
             .then(response => {
                 if (!response.ok) throw new Error(HTTP error ${response.status});
@@ -228,55 +232,6 @@
                 console.error('Error al cargar datos del canal:', error);
                 profileName.textContent = 'Error al cargar canal';
             });
-
-// ------ VÍDEOS DEL CANAL ------
-        
-// Paso 1: obtener la ID de la playlist de "uploads"
-fetch(https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey})
-  .then(res => res.json())
-  .then(data => {
-    const uploadsPlaylistId = data.items[0].contentDetails.relatedPlaylists.uploads;
-
-    return fetch(https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=10&key=${apiKey});
-  })
-  .then(res => res.json())
-  .then(data => {
-    const videoIds = data.items.map(item => item.snippet.resourceId.videoId).join(',');
-
-    return fetch(https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&key=${apiKey}&id=${videoIds});
-  })
-  .then(res => res.json())
-.then(data => {
-  const videosSection = document.getElementById('videos-section');
-  videosSection.innerHTML = '';
-
-  data.items.forEach(item => {
-    // ⚠️ Esta info ya tiene todo lo que necesitas, no hace falta llamar otra vez
-    const videoId = item.snippet.resourceId.videoId;
-    const title = item.snippet.title;
-
-    const videoCard = document.createElement('div');
-    videoCard.classList.add('video-card');
-
-    const iframe = document.createElement('iframe');
-    iframe.src = https://www.youtube.com/embed/${videoId};
-    iframe.setAttribute('allowfullscreen', '');
-
-    const viewCounter = document.createElement('p');
-    viewCounter.classList.add('view-counter');
-    viewCounter.textContent = title;
-
-    videoCard.appendChild(iframe);
-    videoCard.appendChild(viewCounter);
-
-    videosSection.appendChild(videoCard);
-  });
-})
-  .catch(error => {
-    console.error('Error cargando videos normales:', error);
-  });
-        
     </script>
-    
 </body>
-</html>  
+</html> 
