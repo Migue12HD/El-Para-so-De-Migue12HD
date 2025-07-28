@@ -167,6 +167,8 @@
         <div>Sobre mí</div>
     </nav>
 
+<div id="videos-section"></div>
+    
 <!-- Videos -->
 
     <script>
@@ -227,7 +229,7 @@
                 profileName.textContent = 'Error al cargar canal';
             });
 
-// ------ VÍDEOS DEL CANAL ------.
+// ------ VÍDEOS DEL CANAL ------
         
 // Paso 1: obtener la ID de la playlist de "uploads"
 fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey}`)
