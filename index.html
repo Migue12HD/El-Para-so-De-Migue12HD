@@ -247,37 +247,44 @@ function cargarVideos() {
     fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet,id&order=date&maxResults=12&type=video`)
         .then(res => res.json())
         .then(data => {
-            const videoIds = data.items
-                .map(item => item.id.videoId)
-                .filter(id => id); // filtra undefined
+            // Filtrar videos que no sean directos ni estrenos ya aquí
+            const filteredItems = data.items.filter(item => item.snippet.liveBroadcastContent === "none");
 
-            return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,contentDetails,liveStreamingDetails&id=${videoIds.join(',')}`);
+            const videoIds = filteredItems
+                .map(item => item.id.videoId)
+                .filter(id => id);
+
+            if(videoIds.length === 0) {
+                document.getElementById('videos-section').innerHTML = '<p>No hay vídeos normales disponibles.</p>';
+                return;
+            }
+
+            return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,contentDetails&id=${videoIds.join(',')}`);
         })
         .then(res => res.json())
         .then(videoData => {
-            videosContainer.innerHTML = ''; // limpia
+            const videosContainer = document.getElementById('videos-section');
+            videosContainer.innerHTML = '';
 
-            videoData.items
-                .filter(video => video.snippet.liveBroadcastContent === "none") // solo videos normales
-                .forEach(video => {
-                    const videoId = video.id;
-                    const title = video.snippet.title;
-                    const thumbnail = video.snippet.thumbnails.medium.url;
+            videoData.items.forEach(video => {
+                const videoId = video.id;
+                const title = video.snippet.title;
+                const thumbnail = video.snippet.thumbnails.medium.url;
 
-                    const videoElement = document.createElement('div');
-                    videoElement.classList.add('video-card');
-                    videoElement.innerHTML = `
-                        <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer">
-                            <img src="${thumbnail}" alt="${title}" />
-                            <h3>${title}</h3>
-                        </a>
-                    `;
-                    videosContainer.appendChild(videoElement);
-                });
+                const videoElement = document.createElement('div');
+                videoElement.classList.add('video-card');
+                videoElement.innerHTML = `
+                    <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer">
+                        <img src="${thumbnail}" alt="${title}" />
+                        <h3>${title}</h3>
+                    </a>
+                `;
+                videosContainer.appendChild(videoElement);
+            });
         })
         .catch(err => {
             console.error('Error cargando vídeos:', err);
-            videosContainer.innerHTML = '<p>Error al cargar vídeos.</p>';
+            document.getElementById('videos-section').innerHTML = '<p>Error al cargar vídeos.</p>';
         });
 }
 
