@@ -1,100 +1,202 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Migue12HD - Canal Espejo</title>
-  <style>
-    body {
-      background-color: #0f0f0f;
-      color: white;
-      font-family: Arial, sans-serif;
-      margin: 0;
-    }
-    header {
-      background-color: #212121;
-      display: flex;
-      align-items: center;
-      padding: 1rem;
-    }
-    header img {
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
-      margin-right: 1rem;
-    }
-    header h1 {
-      font-size: 1.8rem;
-      margin: 0;
-    }
-    main {
-      padding: 1rem;
-    }
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
-    }
-    .video-card {
-      background-color: #181818;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-    }
-    .video-card img {
-      width: 100%;
-      border-radius: 0.5rem;
-    }
-    .video-card h3 {
-      font-size: 1rem;
-      margin: 0.5rem 0 0;
-    }
-  </style>
+    <title>Migue12HD - Canal Clásico</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.6" />
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .banner {
+            background: url('https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_banner.jpg') no-repeat center;
+            background-size: cover;
+            height: 240px;
+            margin-bottom: 1rem;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            flex-shrink: 0;
+        }
+
+        .profile-text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .profile-name {
+            font-size: 2.5rem;
+            font-weight: 900;
+            user-select: none;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .channel-info {
+            font-size: 1.2rem;
+            user-select: none;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+            color: #ddd;
+        }
+
+        #subscribe-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s ease;
+            min-width: 150px;
+        }
+
+        #subscribe-btn.subscribed {
+            background-color: #aaa;
+            color: black;
+        }
+        
+.channel-nav {
+    display: flex;
+    justify-content: flex-start;
+    gap: 2.5rem;
+    padding-left: 2rem;  /* Igual que el padding horizontal del contenedor padre */
+    margin-top: 0.75rem; /* espacio justo debajo de la imagen */
+    font-size: 1.1rem;
+    user-select: none;
+    color: #ccc;
+
+    max-width: none; /* quita max-width y centrar */
+    margin-left: 0;  /* elimina margin automático */
+}
+
+.channel-nav > div {
+    cursor: default;
+    padding: 8px 0;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.channel-nav > div:hover {
+    border-bottom: 3px solid white;
+    color: white;
+}
+
+
+        .videos {
+            max-width: 1200px;
+            margin: 0 auto 3rem auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        .video-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: none;
+        }
+
+        .view-counter {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 0.25rem;
+            text-align: center;
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <img id="channel-avatar" src="" alt="Avatar Canal">
-    <h1 id="channel-title">Cargando...</h1>
-  </header>
-  <main>
-    <section class="video-grid" id="videos"></section>
-  </main>
 
-  <script>
-    const API_KEY = 'TU_API_KEY'; // Sustitúyelo con tu clave real
-    const CHANNEL_ID = 'UCZBGC0LzM6HVEZUyL6G94Tg';
+    <div class="banner"></div>
 
-    async function fetchChannelInfo() {
-      const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${CHANNEL_ID}&key=${API_KEY}`);
-      const data = await res.json();
-      const channel = data.items[0].snippet;
-      document.getElementById('channel-title').textContent = channel.title;
-      document.getElementById('channel-avatar').src = channel.thumbnails.default.url;
-    }
+    <div class="profile-container">
+        <img
+            class="profile-pic"
+            src="https://raw.githubusercontent.com/Migue12HD/El-Paraiso-De-Migue12HD/main/channels4_profile.jpg"
+            alt="Foto de perfil Migue12HD"
+        />
+        <div class="profile-text-container">
+            <h1 class="profile-name">Migue12HD</h1>
+            <div class="channel-info">
+                <span id="subs-count">0 suscriptores</span> &nbsp;•&nbsp; <span id="video-count">0 vídeos</span>
+            </div>
+            <button id="subscribe-btn">Suscribirse</button>
+        </div>
+    </div>
 
-    async function fetchVideos() {
-      const res = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=50`);
-      const data = await res.json();
-      const container = document.getElementById('videos');
-      data.items.forEach(item => {
-        if (item.id.kind === 'youtube#video') {
-          const videoId = item.id.videoId;
-          const title = item.snippet.title;
-          const thumbnail = item.snippet.thumbnails.medium.url;
-          const videoCard = document.createElement('div');
-          videoCard.className = 'video-card';
-          videoCard.innerHTML = `
-            <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">
-              <img src="${thumbnail}" alt="${title}">
-              <h3>${title}</h3>
-            </a>
-          `;
-          container.appendChild(videoCard);
-        }
-      });
-    }
+    <!-- NAV colocada justo antes de videos -->
+    <nav class="channel-nav" aria-label="Navegación del canal">
+        <div>Inicio</div>
+        <div>Vídeos</div>
+        <div>En directo</div>
+        <div>Listas</div>
+        <div>Sobre mí</div>
+    </nav>
 
-    fetchChannelInfo();
-    fetchVideos();
-  </script>
+    <section class="videos">
+        <div class="video-card">
+            <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+            <p class="view-counter">34,918 visualizaciones</p>
+        </div>
+        <div class="video-card">
+            <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
+            <p class="view-counter">21,483 visualizaciones</p>
+        </div>
+    </section>
+
+    <script>
+        // Contador automático de vídeos
+        const videoCount = document.querySelectorAll('.video-card').length;
+        document.getElementById('video-count').textContent = ${videoCount} vídeos;
+
+        // Lógica de suscripción
+        let subscribed = false;
+        let subsCount = 0;
+
+        const subsText = document.getElementById('subs-count');
+        const subBtn = document.getElementById('subscribe-btn');
+
+        subBtn.addEventListener('click', () => {
+            subscribed = !subscribed;
+
+            subsCount += subscribed ? 1 : -1;
+            subsCount = Math.max(subsCount, 0);
+
+            subsText.textContent = ${subsCount} suscriptores;
+            subBtn.textContent = subscribed ? 'Suscrito' : 'Suscribirse';
+            subBtn.classList.toggle('subscribed', subscribed);
+        });
+    </script>
+
 </body>
-</html>
+</html>   
