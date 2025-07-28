@@ -244,36 +244,32 @@ fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${c
     return fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&key=${apiKey}&id=${videoIds}`);
   })
   .then(res => res.json())
-  .then(data => {
-    const videosSection = document.getElementById('videos-section');
-    videosSection.innerHTML = '';
+.then(data => {
+  const videosSection = document.getElementById('videos-section');
+  videosSection.innerHTML = '';
 
-    // Filtrar solo los vídeos normales
-    const normalVideos = data.items.filter(video => {
-      return video.snippet.liveBroadcastContent === 'none';
-    });
+  data.items.forEach(item => {
+    // ⚠️ Esta info ya tiene todo lo que necesitas, no hace falta llamar otra vez
+    const videoId = item.snippet.resourceId.videoId;
+    const title = item.snippet.title;
 
-    normalVideos.forEach(video => {
-      const videoId = video.id;
-      const title = video.snippet.title;
+    const videoCard = document.createElement('div');
+    videoCard.classList.add('video-card');
 
-      const videoCard = document.createElement('div');
-      videoCard.classList.add('video-card');
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+    iframe.setAttribute('allowfullscreen', '');
 
-      const iframe = document.createElement('iframe');
-      iframe.src = `https://www.youtube.com/embed/${videoId}`;
-      iframe.setAttribute('allowfullscreen', '');
+    const viewCounter = document.createElement('p');
+    viewCounter.classList.add('view-counter');
+    viewCounter.textContent = title;
 
-      const viewCounter = document.createElement('p');
-      viewCounter.classList.add('view-counter');
-      viewCounter.textContent = title;
+    videoCard.appendChild(iframe);
+    videoCard.appendChild(viewCounter);
 
-      videoCard.appendChild(iframe);
-      videoCard.appendChild(viewCounter);
-
-      videosSection.appendChild(videoCard);
-    });
-  })
+    videosSection.appendChild(videoCard);
+  });
+})
   .catch(error => {
     console.error('Error cargando videos normales:', error);
   });
