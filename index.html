@@ -245,28 +245,32 @@ const videosContainer = document.getElementById('videos-section');
 
 function cargarVideos() {
     fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet,id&order=date&maxResults=12&type=video`)
-        .then(res => res.json())
-        .then(data => {
-            // Filtrar videos que no sean directos ni estrenos ya aquí
-            const filteredItems = data.items.filter(item => item.snippet.liveBroadcastContent === "none");
+    .then(res => res.json())
+    .then(data => {
+        console.log('Respuesta /search:', data.items.map(item => ({
+            videoId: item.id.videoId,
+            liveBroadcastContent: item.snippet.liveBroadcastContent,
+            title: item.snippet.title
+        })));
 
-            const videoIds = filteredItems
-                .map(item => item.id.videoId)
-                .filter(id => id);
+        const filteredItems = data.items.filter(item => item.snippet.liveBroadcastContent === "none");
+        
+        const videoIds = filteredItems.map(item => item.id.videoId).filter(id => id);
+        if(videoIds.length === 0) {
+            document.getElementById('videos-section').innerHTML = '<p>No hay vídeos normales disponibles.</p>';
+            return;
+        }
+        
+        return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,contentDetails,liveStreamingDetails&id=${videoIds.join(',')}`);
+    })
+    .then(res => res.json())
+    .then(videoData => {
+        const videosContainer = document.getElementById('videos-section');
+        videosContainer.innerHTML = '';
 
-            if(videoIds.length === 0) {
-                document.getElementById('videos-section').innerHTML = '<p>No hay vídeos normales disponibles.</p>';
-                return;
-            }
-
-            return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,contentDetails&id=${videoIds.join(',')}`);
-        })
-        .then(res => res.json())
-        .then(videoData => {
-            const videosContainer = document.getElementById('videos-section');
-            videosContainer.innerHTML = '';
-
-            videoData.items.forEach(video => {
+        videoData.items
+            .filter(video => !video.liveStreamingDetails) // Solo videos normales, NO directos ni estrenos
+            .forEach(video => {
                 const videoId = video.id;
                 const title = video.snippet.title;
                 const thumbnail = video.snippet.thumbnails.medium.url;
@@ -281,11 +285,11 @@ function cargarVideos() {
                 `;
                 videosContainer.appendChild(videoElement);
             });
-        })
-        .catch(err => {
-            console.error('Error cargando vídeos:', err);
-            document.getElementById('videos-section').innerHTML = '<p>Error al cargar vídeos.</p>';
-        });
+    })
+    .catch(err => {
+        console.error('Error cargando vídeos:', err);
+        document.getElementById('videos-section').innerHTML = '<p>Error al cargar vídeos.</p>';
+    });
 }
 
 cargarVideos();
