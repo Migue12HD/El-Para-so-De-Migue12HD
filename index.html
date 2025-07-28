@@ -165,17 +165,7 @@
     </nav>
 
     <!-- Videos -->
-    <section class="videos" id="videos-section">
-        <div class="video-card">
-            <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
-            <p class="view-counter">34,918 visualizaciones</p>
-        </div>
-        <div class="video-card">
-            <iframe src="https://archive.org/embed/deluxesonic.f-571" allowfullscreen></iframe>
-            <p class="view-counter">21,483 visualizaciones</p>
-        </div>
-    </section>
-
+<section class="videos" id="videos-section"></section>
 
 <!-- JAVASCRIPT -->
 <!-- JAVASCRIPT -->
@@ -244,51 +234,45 @@
 const videosContainer = document.getElementById('videos-section');
 
 function cargarVideos() {
-    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet,id&order=date&maxResults=12&type=video`)
+  fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet,id&order=date&maxResults=12&type=video`)
     .then(res => res.json())
     .then(data => {
-        console.log('Respuesta /search:', data.items.map(item => ({
-            videoId: item.id.videoId,
-            liveBroadcastContent: item.snippet.liveBroadcastContent,
-            title: item.snippet.title
-        })));
+      // Filtrar videos normales (liveBroadcastContent === "none")
+      const videosFiltrados = data.items.filter(item => item.snippet.liveBroadcastContent === "none");
+      
+      if (videosFiltrados.length === 0) {
+        document.getElementById('videos-section').innerHTML = '<p>No hay vídeos normales disponibles.</p>';
+        return;
+      }
+      
+      const videoIds = videosFiltrados.map(item => item.id.videoId).join(',');
 
-        const filteredItems = data.items.filter(item => item.snippet.liveBroadcastContent === "none");
-        
-        const videoIds = filteredItems.map(item => item.id.videoId).filter(id => id);
-        if(videoIds.length === 0) {
-            document.getElementById('videos-section').innerHTML = '<p>No hay vídeos normales disponibles.</p>';
-            return;
-        }
-        
-        return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,contentDetails,liveStreamingDetails&id=${videoIds.join(',')}`);
+      return fetch(`https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet&id=${videoIds}`);
     })
     .then(res => res.json())
     .then(videoData => {
-        const videosContainer = document.getElementById('videos-section');
-        videosContainer.innerHTML = '';
+      const container = document.getElementById('videos-section');
+      container.innerHTML = '';
 
-        videoData.items
-            .filter(video => !video.liveStreamingDetails) // Solo videos normales, NO directos ni estrenos
-            .forEach(video => {
-                const videoId = video.id;
-                const title = video.snippet.title;
-                const thumbnail = video.snippet.thumbnails.medium.url;
+      videoData.items.forEach(video => {
+        const videoId = video.id;
+        const title = video.snippet.title;
+        const thumbnail = video.snippet.thumbnails.medium.url;
 
-                const videoElement = document.createElement('div');
-                videoElement.classList.add('video-card');
-                videoElement.innerHTML = `
-                    <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer">
-                        <img src="${thumbnail}" alt="${title}" />
-                        <h3>${title}</h3>
-                    </a>
-                `;
-                videosContainer.appendChild(videoElement);
-            });
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+        videoCard.innerHTML = `
+          <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer">
+            <img src="${thumbnail}" alt="${title}" />
+            <h3>${title}</h3>
+          </a>
+        `;
+        container.appendChild(videoCard);
+      });
     })
     .catch(err => {
-        console.error('Error cargando vídeos:', err);
-        document.getElementById('videos-section').innerHTML = '<p>Error al cargar vídeos.</p>';
+      console.error('Error cargando vídeos:', err);
+      document.getElementById('videos-section').innerHTML = '<p>Error al cargar vídeos.</p>';
     });
 }
 
