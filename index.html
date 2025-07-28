@@ -103,16 +103,26 @@
             color: white;
         }
 
-    #videos-section {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }
-    .video-card iframe {
-      width: 100%;
-      height: 180px;
-      border: none;
-    }
+        .videos {
+            max-width: 1200px;
+            margin: 0 auto 3rem auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        .video-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: none;
+        }
 
         .view-counter {
             font-size: 0.9rem;
@@ -125,8 +135,6 @@
 </head>
 <body>
 
-<!-- HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML HTML -->
-    
 <!-- Banner dinámico -->
     
     <div class="banner" id="banner"></div>
@@ -160,66 +168,115 @@
     </nav>
 
 <div id="videos-section"></div>
-
-<!-- JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript JaviScript -->
     
 <!-- Videos -->
 
-  <script>
-    const apiKey = 'AIzaSyC9ZxG9lYqb7HYY4gmSYDhA4ppeZuLkkTs';
-    const canalID = 'UC72clDqtrpYOpQT5eUriGfw'; // Este es tu canal
+    <script>
+        const canalID = 'UC72clDqtrpYOpQT5eUriGfw'; // Cambiar por el ID real
+        const apiKey = 'AIzaSyC9ZxG9lYqb7HYY4gmSYDhA4ppeZuLkkTs'; // Tu clave válida
 
-    fetch(https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${canalID}&key=${apiKey})
-      .then(res => res.json())
-      .then(data => {
-        const uploadsPlaylistId = data.items[0].contentDetails.relatedPlaylists.uploads;
-        return fetch(https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=10&key=${apiKey});
-      })
-      .then(res => res.json())
-      .then(data => {
-        const videoIds = data.items.map(item => item.snippet.resourceId.videoId).join(',');
-        return fetch(https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&id=${videoIds}&key=${apiKey});
-      })
-      .then(res => res.json())
-      .then(data => {
-        const videosSection = document.getElementById('videos-section');
-        videosSection.innerHTML = '';
+        // Elementos DOM
+        const bannerDiv = document.getElementById('banner');
+        const avatarImg = document.getElementById('avatar');
+        const profileName = document.getElementById('profile-name');
+        const subsCount = document.getElementById('subs-count');
+        const videoCount = document.getElementById('video-count');
 
-        // FILTRA vídeos normales (los que NO tienen liveStreamingDetails)
-        const onlyNormalVideos = data.items.filter(video => !video.liveStreamingDetails);
+        // Suscripción local (simulada)
+        let subscribed = false;
+        let subsNumber = 0;
 
-        if (onlyNormalVideos.length === 0) {
-          videosSection.innerHTML = 'No hay vídeos normales disponibles.';
-          return;
-        }
-
-        onlyNormalVideos.forEach(item => {
-          const videoId = item.id;
-          const title = item.snippet.title;
-
-          const videoCard = document.createElement('div');
-          videoCard.classList.add('video-card');
-
-          const iframe = document.createElement('iframe');
-          iframe.src = https://www.youtube.com/embed/${videoId};
-          iframe.setAttribute('allowfullscreen', '');
-
-          const viewCounter = document.createElement('p');
-          viewCounter.classList.add('view-counter');
-          viewCounter.textContent = title;
-
-          videoCard.appendChild(iframe);
-          videoCard.appendChild(viewCounter);
-
-          videosSection.appendChild(videoCard);
+        const subscribeBtn = document.getElementById('subscribe-btn');
+        subscribeBtn.addEventListener('click', () => {
+            subscribed = !subscribed;
+            subsNumber += subscribed ? 1 : -1;
+            if(subsNumber < 0) subsNumber = 0;
+            subsCount.textContent = ${subsNumber} suscriptores;
+            subscribeBtn.textContent = subscribed ? 'Suscrito' : 'Suscribirse';
+            subscribeBtn.classList.toggle('subscribed', subscribed);
         });
-      })
-      .catch(error => {
-        console.error('Error cargando vídeos normales:', error);
-        document.getElementById('videos-section').innerText = 'Error al cargar los vídeos.';
-      });
+
+// Fetch datos canal.
+        
+        fetch(https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey})
+            .then(response => {
+                if (!response.ok) throw new Error(HTTP error ${response.status});
+                return response.json();
+            })
+            .then(data => {
+                if (!data.items || data.items.length === 0) {
+                    throw new Error('Canal no encontrado');
+                }
+                const canal = data.items[0];
+
+                // Banner dinámico (fallback si no hay banner)
+                if (canal.brandingSettings.image && canal.brandingSettings.image.bannerExternalUrl) {
+                    bannerDiv.style.backgroundImage = url(${canal.brandingSettings.image.bannerExternalUrl});
+                }
+
+                // Avatar y nombre
+                avatarImg.src = canal.snippet.thumbnails.high.url;
+                avatarImg.alt = Foto de perfil de ${canal.snippet.title};
+                profileName.textContent = canal.snippet.title;
+
+                // Subs y videos
+                subsNumber = parseInt(canal.statistics.subscriberCount) || 0;
+                subsCount.textContent = ${subsNumber.toLocaleString()} suscriptores;
+                videoCount.textContent = ${parseInt(canal.statistics.videoCount).toLocaleString()} vídeos;
+            })
+            .catch(error => {
+                console.error('Error al cargar datos del canal:', error);
+                profileName.textContent = 'Error al cargar canal';
+            });
+
+// ------ VÍDEOS DEL CANAL ------
+        
+// Paso 1: obtener la ID de la playlist de "uploads"
+fetch(https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${channelId}&key=${apiKey})
+  .then(res => res.json())
+  .then(data => {
+    const uploadsPlaylistId = data.items[0].contentDetails.relatedPlaylists.uploads;
+
+    return fetch(https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=10&key=${apiKey});
+  })
+  .then(res => res.json())
+  .then(data => {
+    const videoIds = data.items.map(item => item.snippet.resourceId.videoId).join(',');
+
+    return fetch(https://www.googleapis.com/youtube/v3/videos?part=snippet,liveStreamingDetails&key=${apiKey}&id=${videoIds});
+  })
+  .then(res => res.json())
+.then(data => {
+  const videosSection = document.getElementById('videos-section');
+  videosSection.innerHTML = '';
+
+  data.items.forEach(item => {
+    // ⚠️ Esta info ya tiene todo lo que necesitas, no hace falta llamar otra vez
+    const videoId = item.snippet.resourceId.videoId;
+    const title = item.snippet.title;
+
+    const videoCard = document.createElement('div');
+    videoCard.classList.add('video-card');
+
+    const iframe = document.createElement('iframe');
+    iframe.src = https://www.youtube.com/embed/${videoId};
+    iframe.setAttribute('allowfullscreen', '');
+
+    const viewCounter = document.createElement('p');
+    viewCounter.classList.add('view-counter');
+    viewCounter.textContent = title;
+
+    videoCard.appendChild(iframe);
+    videoCard.appendChild(viewCounter);
+
+    videosSection.appendChild(videoCard);
+  });
+})
+  .catch(error => {
+    console.error('Error cargando videos normales:', error);
+  });
         
     </script>
     
 </body>
-</html>
+</html>  
