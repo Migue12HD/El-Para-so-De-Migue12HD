@@ -176,62 +176,67 @@
         </div>
     </section>
 
-    <script>
-        const canalID = 'UC72clDqtrpYOpQT5eUriGfw'; // Cambiar por el ID real
-        const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE'; // Tu clave válida
 
-        // Elementos DOM
-        const bannerDiv = document.getElementById('banner');
-        const avatarImg = document.getElementById('avatar');
-        const profileName = document.getElementById('profile-name');
-        const subsCount = document.getElementById('subs-count');
-        const videoCount = document.getElementById('video-count');
+<!-- JAVASCRIPT -->
+<!-- JAVASCRIPT -->
+<!-- JAVASCRIPT -->
+    
+<script>
+    const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
+    const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
 
-        // Suscripción local (simulada)
-        let subscribed = false;
-        let subsNumber = 0;
+    // Elementos DOM
+    const bannerDiv = document.getElementById('banner');
+    const avatarImg = document.getElementById('avatar');
+    const profileName = document.getElementById('profile-name');
+    const subsCount = document.getElementById('subs-count');
+    const videoCount = document.getElementById('video-count');
 
-        const subscribeBtn = document.getElementById('subscribe-btn');
-        subscribeBtn.addEventListener('click', () => {
-            subscribed = !subscribed;
-            subsNumber += subscribed ? 1 : -1;
-            if(subsNumber < 0) subsNumber = 0;
-            subsCount.textContent = ${subsNumber} suscriptores;
-            subscribeBtn.textContent = subscribed ? 'Suscrito' : 'Suscribirse';
-            subscribeBtn.classList.toggle('subscribed', subscribed);
+    let subscribed = false;
+    let subsNumber = 0;
+
+    const subscribeBtn = document.getElementById('subscribe-btn');
+    subscribeBtn.addEventListener('click', () => {
+        subscribed = !subscribed;
+        subsNumber += subscribed ? 1 : -1;
+        if (subsNumber < 0) subsNumber = 0;
+        subsCount.textContent = `${subsNumber} suscriptores`;
+        subscribeBtn.textContent = subscribed ? 'Suscrito' : 'Suscribirse';
+        subscribeBtn.classList.toggle('subscribed', subscribed);
+    });
+
+    // Fetch datos del canal
+    fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey}`)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            if (!data.items || data.items.length === 0) {
+                throw new Error('Canal no encontrado');
+            }
+            const canal = data.items[0];
+
+            // Banner dinámico
+            if (canal.brandingSettings.image?.bannerExternalUrl) {
+                bannerDiv.style.backgroundImage = `url(${canal.brandingSettings.image.bannerExternalUrl})`;
+            }
+
+            // Avatar y nombre
+            avatarImg.src = canal.snippet.thumbnails.high.url;
+            avatarImg.alt = `Foto de perfil de ${canal.snippet.title}`;
+            profileName.textContent = canal.snippet.title;
+
+            // Subs y videos
+            subsNumber = parseInt(canal.statistics.subscriberCount) || 0;
+            subsCount.textContent = `${subsNumber.toLocaleString()} suscriptores`;
+            videoCount.textContent = `${parseInt(canal.statistics.videoCount).toLocaleString()} vídeos`;
+        })
+        .catch(error => {
+            console.error('Error al cargar datos del canal:', error);
+            profileName.textContent = 'Error al cargar canal';
         });
+</script>
 
-        // Fetch datos canal
-        fetch(https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey})
-            .then(response => {
-                if (!response.ok) throw new Error(HTTP error ${response.status});
-                return response.json();
-            })
-            .then(data => {
-                if (!data.items || data.items.length === 0) {
-                    throw new Error('Canal no encontrado');
-                }
-                const canal = data.items[0];
-
-                // Banner dinámico (fallback si no hay banner)
-                if (canal.brandingSettings.image && canal.brandingSettings.image.bannerExternalUrl) {
-                    bannerDiv.style.backgroundImage = url(${canal.brandingSettings.image.bannerExternalUrl});
-                }
-
-                // Avatar y nombre
-                avatarImg.src = canal.snippet.thumbnails.high.url;
-                avatarImg.alt = Foto de perfil de ${canal.snippet.title};
-                profileName.textContent = canal.snippet.title;
-
-                // Subs y videos
-                subsNumber = parseInt(canal.statistics.subscriberCount) || 0;
-                subsCount.textContent = ${subsNumber.toLocaleString()} suscriptores;
-                videoCount.textContent = ${parseInt(canal.statistics.videoCount).toLocaleString()} vídeos;
-            })
-            .catch(error => {
-                console.error('Error al cargar datos del canal:', error);
-                profileName.textContent = 'Error al cargar canal';
-            });
-    </script>
 </body>
 </html> 
