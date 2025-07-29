@@ -236,10 +236,10 @@
   let videosNormales = [];
 
   async function cargarVideosNormales() {
-    videosNormales = [];
-    nextPageToken = '';
+    let nextToken;
+    let videosNormales = [];
 
-    while (videosNormales.length < 10) { // quieres al menos 10 videos normales
+    do {
       const url = new URL('https://www.googleapis.com/youtube/v3/search');
       url.searchParams.set('key', apiKey);
       url.searchParams.set('channelId', canalID);
@@ -247,52 +247,46 @@
       url.searchParams.set('order', 'date');
       url.searchParams.set('type', 'video');
       url.searchParams.set('maxResults', '50');
-      if (nextPageToken) url.searchParams.set('pageToken', nextPageToken);
+      if (nextToken) url.searchParams.set('pageToken', nextToken);
 
-      try {
-        const res = await fetch(url.toString());
-        const data = await res.json();
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!data.items) break;
 
-        if (!data.items) break;
+      const filtrados = data.items.filter(i => i.snippet.liveBroadcastContent === 'none');
+      videosNormales = videosNormales.concat(filtrados);
+      nextToken = data.nextPageToken;
+    } while (videosNormales.length < 10 && nextToken);
 
-        // Filtra videos normales (no directos ni premieres)
-        const videosFiltrados = data.items.filter(item => item.snippet.liveBroadcastContent === 'none');
-
-        videosNormales.push(...videosFiltrados);
-
-        if (!data.nextPageToken) break;
-        nextPageToken = data.nextPageToken;
-      } catch (e) {
-        console.error('Error al cargar videos normales', e);
-        break;
-      }
-    }
-
-    mostrarVideos(videosNormales.slice(0, 10)); // muestra solo 10 videos normales
-  }
-
-  function mostrarVideos(videos) {
-    videosSection.innerHTML = '';
-    if (videos.length === 0) {
-      videosSection.textContent = 'No hay videos normales disponibles.';
+    const firstIds = videosNormales.slice(0,10).map(i => i.id.videoId);
+    if (!firstIds.length) {
+      document.getElementById('videos-section').innerText = 'No hay vídeos normales disponibles.';
       return;
     }
 
-    videos.forEach(video => {
-      const videoId = video.id.videoId;
-      const title = video.snippet.title;
-      const thumb = video.snippet.thumbnails.medium.url;
+    const detailUrl = `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,liveStreamingDetails&id=${firstIds.join(',')}`;
+    const detailRes = await fetch(detailUrl);
+    const detailData = await detailRes.json();
+    if (!detailData.items.length) {
+      document.getElementById('videos-section').innerText = 'No hay vídeos normales disponibles.';
+      return;
+    }
 
-      const card = document.createElement('div');
-      card.className = 'video-card';
-      card.innerHTML = `
-        <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer">
-          <img src="${thumb}" alt="${title}" />
-          <h3>${title}</h3>
-        </a>
-      `;
-      videosSection.appendChild(card);
-    });
+    const container = document.getElementById('videos-section');
+    container.innerHTML = '';
+
+    detailData.items
+      .filter(v => !v.liveStreamingDetails)
+      .forEach(video => {
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.innerHTML = `
+          <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank" rel="noopener noreferrer">
+            <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}" />
+            <h3>${video.snippet.title}</h3>
+          </a>`;
+        container.appendChild(card);
+      });
   }
 
   cargarVideosNormales();
