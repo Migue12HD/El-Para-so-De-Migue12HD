@@ -135,6 +135,9 @@
 </head>
 <body>
 
+<!--HTML-->
+
+    
     <!-- Banner dinámico -->
     <div class="banner" id="banner"></div>
 
@@ -249,20 +252,13 @@ async function cargarUltimosVideosYT() {
             return;
         }
 
-        const grid = document.createElement('div');
-        grid.style.display = 'grid';
-        grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(360px, 1fr))';
-        grid.style.gap = '1rem';
-        grid.style.padding = '1rem 2rem';
-        grid.style.maxWidth = '1400px';
-        grid.style.margin = '0 auto';
-
+        // NO creamos contenedor grid nuevo, usamos container directamente
         data.items.forEach(video => {
             const videoId = video.id.videoId;
             const titulo = video.snippet.title;
             const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
             
-            // CAMBIÁ ESTO para redirigir a IPFS o lo que quieras
+            // URL personalizada para cada video
             const urlPersonalizada = `/ver.html?v=${videoId}`;  
 
             const card = document.createElement('div');
@@ -280,10 +276,8 @@ async function cargarUltimosVideosYT() {
                     </div>
                 </a>
             `;
-            grid.appendChild(card);
+            container.appendChild(card);
         });
-
-        container.appendChild(grid);
 
     } catch (error) {
         console.error("Error al cargar vídeos del canal:", error);
