@@ -115,10 +115,10 @@
 }
 
 .video-card {
-    background-color: #111;
-    border-radius: 8px;
+    background-color: transparent; /* sin fondo */
+    border-radius: 0;
     overflow: hidden;
-    border: 1px solid #444;
+    border: none;
     display: flex;
     flex-direction: column;
     transition: transform 0.3s ease;
@@ -132,14 +132,16 @@
     width: 100%;
     aspect-ratio: 16 / 9;
     display: block;
+    border-radius: 0;
 }
 
 .video-card h3 {
     font-size: 1rem;
     margin: 0.5rem 0 0.75rem;
-    padding: 0 0.75rem;
+    padding: 0;
     color: white;
     text-align: center;
+    background: none;
 }
 
         iframe {
@@ -287,10 +289,6 @@ async function cargarUltimosVideosYT() {
 
             const card = document.createElement('div');
             card.className = 'video-card';
-            card.style.border = '1px solid #444';
-            card.style.borderRadius = '8px';
-            card.style.overflow = 'hidden';
-            card.style.backgroundColor = '#111';
 
             card.innerHTML = `
                 <a href="${urlPersonalizada}" style="text-decoration: none; color: white;">
