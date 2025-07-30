@@ -235,86 +235,42 @@
   let nextPageToken = '';
   let videosNormales = [];
 
-async function cargarVideosNormales() {
-  // Referencia al contenedor
-  const container = document.getElementById('videos-section');
+async function cargarUltimosVideosYT() {
+    const container = document.getElementById('videos-section');
+    container.innerHTML += '<p style="text-align: center; color: #aaa;">Cargando vídeos...</p>';
 
-  // Primero añade el video IPFS manualmente
-  const ipfsCard = document.createElement('div');
-  ipfsCard.className = 'video-card';
-  ipfsCard.innerHTML = `
-    <video controls width="100%" style="aspect-ratio: 16 / 9; background: black;">
-      <source src="https://bafybeifb57ysmmgntwafjordaosz4lhu7yoe4sildy2swg6ilxpq2gqfcm.ipfs.dweb.link?filename=OLD%20TRAP%20100%25%20-%20Proyecto_09-02_Full%20HD%201080p.mp4" type="video/mp4">
-      Tu navegador no soporta video HTML5.
-    </video>
-    <h3>OLD TRAP 100% - Proyecto 09-02 Full HD 1080p (IPFS)</h3>
-  `;
-  container.appendChild(ipfsCard);
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12`;
+        const res = await fetch(url);
+        const data = await res.json();
 
-const ipfsCard2 = document.createElement('div');
-ipfsCard2.className = 'video-card';
-ipfsCard2.innerHTML = `
-  <video controls style="width: 100%; aspect-ratio: 16 / 9; background: black;">
-    <source src="https://bafybeiajn4ulk4kj5buxs4vboj3zhwmn6xyrof34fxmbeqbpcvnnxaereu.ipfs.dweb.link?filename=output_4k.mp4" type="video/mp4">
-    Tu navegador no soporta video HTML5.
-  </video>
-  <h3>Recorte 2k60 (IPFS)</h3>
-`;
-container.appendChild(ipfsCard2);
-    
-  // Ahora sigue con el resto de videos YouTube como ya tienes
+        if (!data.items || !data.items.length) {
+            container.innerHTML += '<p style="text-align: center; color: #777;">No hay vídeos disponibles.</p>';
+            return;
+        }
 
-  let nextToken;
-  let videosNormales = [];
+        container.innerHTML = ''; // Limpiar texto "Cargando..."
 
-  do {
-    const url = new URL('https://www.googleapis.com/youtube/v3/search');
-    url.searchParams.set('key', apiKey);
-    url.searchParams.set('channelId', canalID);
-    url.searchParams.set('part', 'snippet');
-    url.searchParams.set('order', 'date');
-    url.searchParams.set('type', 'video');
-    url.searchParams.set('maxResults', '50');
-    if (nextToken) url.searchParams.set('pageToken', nextToken);
+        data.items.forEach(video => {
+            const videoId = video.id.videoId;
+            const titulo = video.snippet.title;
 
-    const res = await fetch(url);
-    const data = await res.json();
-    if (!data.items) break;
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            card.innerHTML = `
+                <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen loading="lazy"></iframe>
+                <h3 style="margin-top: 0.5rem; font-size: 1rem; text-align: center;">${titulo}</h3>
+            `;
+            container.appendChild(card);
+        });
 
-    const filtrados = data.items.filter(i => i.snippet.liveBroadcastContent === 'none');
-    videosNormales = videosNormales.concat(filtrados);
-    nextToken = data.nextPageToken;
-  } while (videosNormales.length < 10 && nextToken);
-
-  const firstIds = videosNormales.slice(0,10).map(i => i.id.videoId);
-  if (!firstIds.length) {
-    container.innerText = 'No hay vídeos normales disponibles.';
-    return;
-  }
-
-  const detailUrl = `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&part=snippet,liveStreamingDetails&id=${firstIds.join(',')}`;
-  const detailRes = await fetch(detailUrl);
-  const detailData = await detailRes.json();
-  if (!detailData.items.length) {
-    container.innerText = 'No hay vídeos normales disponibles.';
-    return;
-  }
-
-  detailData.items
-    .filter(v => !v.liveStreamingDetails)
-    .forEach(video => {
-      const card = document.createElement('div');
-      card.className = 'video-card';
-      card.innerHTML = `
-        <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank" rel="noopener noreferrer">
-          <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}" />
-          <h3>${video.snippet.title}</h3>
-        </a>`;
-      container.appendChild(card);
-    });
+    } catch (error) {
+        console.error("Error al cargar vídeos del canal:", error);
+        container.innerHTML += '<p style="text-align: center; color: red;">Error al cargar vídeos.</p>';
+    }
 }
 
-  cargarVideosNormales();
+cargarUltimosVideosYT();
     
 </script>
 
