@@ -271,20 +271,7 @@ fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,br
 
 async function cargarUltimosVideosYT() {
     const container = document.getElementById('videos-section');
-    container.innerHTML = `
-        <div style="text-align: center; margin-bottom: 0.5rem;">
-            <h2 style="margin: 0;">Últimos vídeos</h2>
-        </div>
-        <hr style="border: none; height: 2px; background-color: #555; width: 100%; margin-bottom: 2rem;" />
-        <div class="videos-grid" style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 1.5rem;
-            padding: 0 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        "></div>
-    `;
+    grid.innerHTML = '';
 
     try {
         const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12`;
