@@ -82,13 +82,13 @@
             display: flex;
             justify-content: flex-start;
             gap: 2.5rem;
-            padding-left: 2rem;  /* Igual que el padding horizontal del contenedor padre */
-            margin-top: 0.75rem; /* espacio justo debajo de la imagen */
+            padding-left: 2rem;
+            margin-top: 0.75rem;
             font-size: 1.1rem;
             user-select: none;
             color: #ccc;
-            max-width: none; /* quita max-width y centrar */
-            margin-left: 0;  /* elimina margin automático */
+            max-width: none;
+            margin-left: 0;
         }
 
         .channel-nav > div {
@@ -103,54 +103,57 @@
             color: white;
         }
 
-.videos {
-    width: 100%;
-    max-width: 1280px;
-    margin: 2rem auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    padding: 0 2rem;
-    justify-content: center;
-}
+        .videos {
+            width: 100%;
+            max-width: 1280px;
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding: 0 2rem;
+            justify-content: center;
+        }
 
-.video-card {
-    background-color: transparent; /* sin fondo */
-    border-radius: 0;
-    overflow: hidden;
-    border: none;
-    flex-direction: column;
-    transition: transform 0.3s ease;
-}
+        .video-card {
+            background-color: transparent;
+            border-radius: 0;
+            overflow: hidden;
+            border: none;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
 
-.video-card:hover {
-    transform: scale(1.02);
-}
+        .video-card:hover {
+            transform: scale(1.02);
+        }
 
-.video-card img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 0;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-}
+        .video-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
 
-.video-card h3 {
-    font-size: 1rem;
-    margin: 0.5rem 0 0.75rem;
-    padding: 0;
-    color: white;
-    text-align: left;
-    background: none;
-}
+        .video-card h3 {
+            font-size: 1rem;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0;
+            color: white;
+            text-align: left;
+            background: none;
+        }
 
-.videos-grid {
-    display: block; /* o nada */
-    padding: 0 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-}
+        /* Cambiado para grid de 3 columnas */
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
         
         iframe {
             width: 100%;
@@ -169,13 +172,8 @@
 </head>
 <body>
 
-<!--HTML-->
-
-    
-    <!-- Banner dinámico -->
     <div class="banner" id="banner"></div>
 
-    <!-- Perfil -->
     <div class="profile-container">
         <img
             class="profile-pic"
@@ -192,7 +190,6 @@
         </div>
     </div>
 
-    <!-- Navegación -->
     <nav class="channel-nav" aria-label="Navegación del canal">
         <div>INICIO</div>
         <div>VÍDEOS</div>
@@ -201,18 +198,12 @@
         <div>MÁS INFORMACIÓN</div>
     </nav>
 
-    <!-- Videos -->
-<section class="videos" id="videos-section"></section>
+    <section class="videos" id="videos-section"></section>
 
-<!-- JAVASCRIPT -->
-<!-- JAVASCRIPT -->
-<!-- JAVASCRIPT -->
-    
 <script>
     const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
     const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
 
-    // Elementos DOM
     const bannerDiv = document.getElementById('banner');
     const avatarImg = document.getElementById('avatar');
     const profileName = document.getElementById('profile-name');
@@ -232,7 +223,6 @@
         subscribeBtn.classList.toggle('subscribed', subscribed);
     });
 
-    // Fetch datos del canal
     fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey}`)
         .then(response => {
             if (!response.ok) throw new Error(`HTTP error ${response.status}`);
@@ -244,17 +234,14 @@
             }
             const canal = data.items[0];
 
-            // Banner dinámico
             if (canal.brandingSettings.image?.bannerExternalUrl) {
                 bannerDiv.style.backgroundImage = `url(${canal.brandingSettings.image.bannerExternalUrl})`;
             }
 
-            // Avatar y nombre
             avatarImg.src = canal.snippet.thumbnails.high.url;
             avatarImg.alt = `Foto de perfil de ${canal.snippet.title}`;
             profileName.textContent = canal.snippet.title;
 
-            // Subs y videos
             subsNumber = parseInt(canal.statistics.subscriberCount) || 0;
             subsCount.textContent = `${subsNumber.toLocaleString()} suscriptores`;
             videoCount.textContent = `${parseInt(canal.statistics.videoCount).toLocaleString()} vídeos`;
@@ -264,67 +251,51 @@
             profileName.textContent = 'Error al cargar canal';
         });
 
-// VÍDEOS
-// VÍDEOS
-// VÍDEOS
-
   const videosSection = document.getElementById('videos-section');
-  let nextPageToken = '';
-  let videosNormales = [];
 
 async function cargarUltimosVideosYT() {
-    
-const container = document.getElementById('videos-section');
-container.innerHTML = `
-    <div style="text-align: center; margin-bottom: 0.5rem;">
-        <h2 style="margin: 0;">Últimos vídeos</h2>
-    </div>
-    <hr style="border: none; height: 2px; background-color: #555; width: 100%; margin-bottom: 2rem;" />
-    <div class="videos-grid"></div>
-`;
+    const container = document.getElementById('videos-section');
+    container.innerHTML = `
+        <div style="text-align: center; margin-bottom: 0.5rem;">
+            <h2 style="margin: 0;">Últimos vídeos</h2>
+        </div>
+        <hr style="border: none; height: 2px; background-color: #555; width: 100%; margin-bottom: 2rem;" />
+        <div class="videos-grid"></div>
+    `;
 
     try {
         const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12`;
         const res = await fetch(url);
         const data = await res.json();
 
-const grid = container.querySelector('.videos-grid');
-
-// Si quieres columna única:
-grid.style.display = 'flex';
-grid.style.flexDirection = 'column';
-grid.style.gap = '1.5rem';
-grid.style.padding = '0 2rem';
-grid.style.maxWidth = '1400px';
-grid.style.margin = '0 auto';
+        const grid = container.querySelector('.videos-grid');
+        // grid ya tiene CSS con display:grid y 3 columnas (por la clase)
 
         if (!data.items || !data.items.length) {
             container.innerHTML += '<p style="text-align: center; color: #777;">No hay vídeos disponibles.</p>';
             return;
         }
 
-        // NO creamos contenedor grid nuevo, usamos container directamente
         data.items.forEach(video => {
-        const videoId = video.id.videoId;
-        const titulo = video.snippet.title;
-        const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-    
-        // URL personalizada para cada video
-        const urlPersonalizada = `/ver.html?v=${videoId}`;  
+            const videoId = video.id.videoId;
+            const titulo = video.snippet.title;
+            const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 
-        const card = document.createElement('div');
-        card.className = 'video-card';
+            const urlPersonalizada = `/ver.html?v=${videoId}`;
 
-        card.innerHTML = `
-        <a href="${urlPersonalizada}" style="text-decoration: none; color: white;">
-            <img src="${thumbnail}" alt="${titulo}" style="width: 100%; display: block;" />
-            <div style="padding: 0.75rem;">
-                <h3 style="font-size: 1rem; margin: 0;">${titulo}</h3>
-            </div>
-        </a>
-        `;
+            const card = document.createElement('div');
+            card.className = 'video-card';
 
-        grid.appendChild(card);
+            card.innerHTML = `
+                <a href="${urlPersonalizada}" style="text-decoration: none; color: white;">
+                    <img src="${thumbnail}" alt="${titulo}" style="width: 100%; display: block;" />
+                    <div style="padding: 0.75rem;">
+                        <h3 style="font-size: 1rem; margin: 0;">${titulo}</h3>
+                    </div>
+                </a>
+            `;
+
+            grid.appendChild(card);
         });
 
     } catch (error) {
@@ -334,8 +305,8 @@ grid.style.margin = '0 auto';
 }
 
 cargarUltimosVideosYT();
-    
+
 </script>
 
 </body>
-</html> 
+</html>
