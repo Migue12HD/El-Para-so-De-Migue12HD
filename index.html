@@ -203,118 +203,104 @@
 <!-- JAVASCRIPT -->
     
 <script>
-    const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
-    const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
+const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
+const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
 
-    // Elementos DOM
-    const bannerDiv = document.getElementById('banner');
-    const avatarImg = document.getElementById('avatar');
-    const profileName = document.getElementById('profile-name');
-    const subsCount = document.getElementById('subs-count');
-    const videoCount = document.getElementById('video-count');
+const bannerDiv = document.getElementById('banner');
+const avatarImg = document.getElementById('avatar');
+const profileName = document.getElementById('profile-name');
+const subsCount = document.getElementById('subs-count');
+const videoCount = document.getElementById('video-count');
 
-    let subscribed = false;
-    let subsNumber = 0;
+let subscribed = false;
+let subsNumber = 0;
 
-    const subscribeBtn = document.getElementById('subscribe-btn');
-    subscribeBtn.addEventListener('click', () => {
-        subscribed = !subscribed;
-        subsNumber += subscribed ? 1 : -1;
-        if (subsNumber < 0) subsNumber = 0;
-        subsCount.textContent = ${subsNumber} suscriptores;
-        subscribeBtn.textContent = subscribed ? 'Suscrito' : 'Suscribirse';
-        subscribeBtn.classList.toggle('subscribed', subscribed);
+const subscribeBtn = document.getElementById('subscribe-btn');
+subscribeBtn.addEventListener('click', () => {
+    subscribed = !subscribed;
+    subsNumber += subscribed ? 1 : -1;
+    if (subsNumber < 0) subsNumber = 0;
+    subsCount.textContent = `${subsNumber} suscriptores`;
+    subscribeBtn.textContent = subscribed ? 'Suscrito' : 'Suscribirse';
+    subscribeBtn.classList.toggle('subscribed', subscribed);
+});
+
+fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey}`)
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+        return response.json();
+    })
+    .then(data => {
+        if (!data.items || data.items.length === 0) {
+            throw new Error('Canal no encontrado');
+        }
+        const canal = data.items[0];
+
+        if (canal.brandingSettings.image?.bannerExternalUrl) {
+            bannerDiv.style.backgroundImage = `url(${canal.brandingSettings.image.bannerExternalUrl})`;
+        }
+
+        avatarImg.src = canal.snippet.thumbnails.high.url;
+        avatarImg.alt = `Foto de perfil de ${canal.snippet.title}`;
+        profileName.textContent = canal.snippet.title;
+
+        subsNumber = parseInt(canal.statistics.subscriberCount) || 0;
+        subsCount.textContent = `${subsNumber.toLocaleString()} suscriptores`;
+        videoCount.textContent = `${parseInt(canal.statistics.videoCount).toLocaleString()} vídeos`;
+    })
+    .catch(error => {
+        console.error('Error al cargar datos del canal:', error);
+        profileName.textContent = 'Error al cargar canal';
     });
-
-    // Fetch datos del canal
-    fetch(https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey})
-        .then(response => {
-            if (!response.ok) throw new Error(HTTP error ${response.status});
-            return response.json();
-        })
-        .then(data => {
-            if (!data.items || data.items.length === 0) {
-                throw new Error('Canal no encontrado');
-            }
-            const canal = data.items[0];
-
-            // Banner dinámico
-            if (canal.brandingSettings.image?.bannerExternalUrl) {
-                bannerDiv.style.backgroundImage = url(${canal.brandingSettings.image.bannerExternalUrl});
-            }
-
-            // Avatar y nombre
-            avatarImg.src = canal.snippet.thumbnails.high.url;
-            avatarImg.alt = Foto de perfil de ${canal.snippet.title};
-            profileName.textContent = canal.snippet.title;
-
-            // Subs y videos
-            subsNumber = parseInt(canal.statistics.subscriberCount) || 0;
-            subsCount.textContent = ${subsNumber.toLocaleString()} suscriptores;
-            videoCount.textContent = ${parseInt(canal.statistics.videoCount).toLocaleString()} vídeos;
-        })
-        .catch(error => {
-            console.error('Error al cargar datos del canal:', error);
-            profileName.textContent = 'Error al cargar canal';
-        });
-
-// VÍDEOS
-// VÍDEOS
-// VÍDEOS
-
-  const videosSection = document.getElementById('videos-section');
-  let nextPageToken = '';
-  let videosNormales = [];
 
 async function cargarUltimosVideosYT() {
     const container = document.getElementById('videos-section');
-container.innerHTML = 
-    <div style="text-align: center; margin-bottom: 0.5rem;">
-        <h2 style="margin: 0;">Últimos vídeos</h2>
-    </div>
-    <hr style="border: none; height: 2px; background-color: #555; width: 100%; margin-bottom: 2rem;" />
-;
+    container.innerHTML = `
+        <div style="text-align: center; margin-bottom: 0.5rem;">
+            <h2 style="margin: 0;">Últimos vídeos</h2>
+        </div>
+        <hr style="border: none; height: 2px; background-color: #555; width: 100%; margin-bottom: 2rem;" />
+        <div class="videos-grid" style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 1.5rem;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        "></div>
+    `;
 
     try {
-        const url = https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12;
+        const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12`;
         const res = await fetch(url);
         const data = await res.json();
 
-        const grid = document.createElement('div');
-        grid.style.display = 'grid';
-        grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(360px, 1fr))';
-        grid.style.gap            = '1.5rem';
-        grid.style.padding        = '0 2rem';
-        grid.style.maxWidth       = '1400px';
-        grid.style.margin         = '0 auto';
-
+        const grid = container.querySelector('.videos-grid');
 
         if (!data.items || !data.items.length) {
             container.innerHTML += '<p style="text-align: center; color: #777;">No hay vídeos disponibles.</p>';
             return;
         }
 
-        // NO creamos contenedor grid nuevo, usamos container directamente
         data.items.forEach(video => {
             const videoId = video.id.videoId;
             const titulo = video.snippet.title;
-            const thumbnail = https://i.ytimg.com/vi/${videoId}/hqdefault.jpg;
-            
-            // URL personalizada para cada video
-            const urlPersonalizada = /ver.html?v=${videoId};  
+            const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+            const urlPersonalizada = `/ver.html?v=${videoId}`;
 
             const card = document.createElement('div');
             card.className = 'video-card';
 
-            card.innerHTML = 
+            card.innerHTML = `
                 <a href="${urlPersonalizada}" style="text-decoration: none; color: white;">
                     <img src="${thumbnail}" alt="${titulo}" style="width: 100%; display: block;" />
                     <div style="padding: 0.75rem;">
                         <h3 style="font-size: 1rem; margin: 0;">${titulo}</h3>
                     </div>
                 </a>
-            ;
-            container.appendChild(card);
+            `;
+
+            grid.appendChild(card);
         });
 
     } catch (error) {
