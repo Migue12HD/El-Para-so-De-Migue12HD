@@ -268,7 +268,10 @@
 
 async function cargarUltimosVideosYT() {
     const container = document.getElementById('videos-section');
-    container.innerHTML = "<h2 style='text-align: center;'>Últimos vídeos</h2>";
+    container.innerHTML = `
+    <h2 style="text-align: center; margin-bottom: 0.5rem;">Últimos vídeos</h2>
+    <hr style="border: none; height: 1px; background-color: #444; margin: 0 auto 1.5rem auto; width: 80%;" />
+`;
 
     try {
         const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12`;
