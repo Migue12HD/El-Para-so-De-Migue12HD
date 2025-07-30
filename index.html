@@ -268,15 +268,26 @@
 
 async function cargarUltimosVideosYT() {
     const container = document.getElementById('videos-section');
-    container.innerHTML = `
-    <h2 style="text-align: center; margin-bottom: 0.5rem;">Últimos vídeos</h2>
-    <hr style="border: none; height: 1px; background-color: #444; margin: 0 auto 1.5rem auto; width: 80%;" />
+container.innerHTML = `
+    <div style="text-align: center; margin-bottom: 0.5rem;">
+        <h2 style="margin: 0;">Últimos vídeos</h2>
+    </div>
+    <hr style="border: none; height: 2px; background-color: #555; width: 100%; margin-bottom: 2rem;" />
 `;
 
     try {
         const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12`;
         const res = await fetch(url);
         const data = await res.json();
+
+        const grid = document.createElement('div');
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(360px, 1fr))';
+        grid.style.gap            = '1.5rem';
+        grid.style.padding        = '0 2rem';
+        grid.style.maxWidth       = '1400px';
+        grid.style.margin         = '0 auto';
+
 
         if (!data.items || !data.items.length) {
             container.innerHTML += '<p style="text-align: center; color: #777;">No hay vídeos disponibles.</p>';
