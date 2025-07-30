@@ -237,7 +237,7 @@
 
 async function cargarUltimosVideosYT() {
     const container = document.getElementById('videos-section');
-    container.innerHTML += '<p style="text-align: center; color: #aaa;">Cargando vídeos...</p>';
+    container.innerHTML = "<h2 style='text-align: center;'>Últimos vídeos</h2>";
 
     try {
         const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12`;
@@ -249,20 +249,41 @@ async function cargarUltimosVideosYT() {
             return;
         }
 
-        container.innerHTML = ''; // Limpiar texto "Cargando..."
+        const grid = document.createElement('div');
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(360px, 1fr))';
+        grid.style.gap = '1rem';
+        grid.style.padding = '1rem 2rem';
+        grid.style.maxWidth = '1400px';
+        grid.style.margin = '0 auto';
 
         data.items.forEach(video => {
             const videoId = video.id.videoId;
             const titulo = video.snippet.title;
+            const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+            
+            // CAMBIÁ ESTO para redirigir a IPFS o lo que quieras
+            const urlPersonalizada = `/ver.html?v=${videoId}`;  
 
             const card = document.createElement('div');
             card.className = 'video-card';
+            card.style.border = '1px solid #444';
+            card.style.borderRadius = '8px';
+            card.style.overflow = 'hidden';
+            card.style.backgroundColor = '#111';
+
             card.innerHTML = `
-                <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen loading="lazy"></iframe>
-                <h3 style="margin-top: 0.5rem; font-size: 1rem; text-align: center;">${titulo}</h3>
+                <a href="${urlPersonalizada}" style="text-decoration: none; color: white;">
+                    <img src="${thumbnail}" alt="${titulo}" style="width: 100%; display: block;" />
+                    <div style="padding: 0.75rem;">
+                        <h3 style="font-size: 1rem; margin: 0;">${titulo}</h3>
+                    </div>
+                </a>
             `;
-            container.appendChild(card);
+            grid.appendChild(card);
         });
+
+        container.appendChild(grid);
 
     } catch (error) {
         console.error("Error al cargar vídeos del canal:", error);
