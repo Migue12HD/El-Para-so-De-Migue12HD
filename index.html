@@ -196,8 +196,24 @@
     </nav>
 
     <!-- Videos -->
-<section class="videos" id="videos-section"></section>
+<section id="videos-section">
+  <div class="videos-header" style="margin-bottom: 1rem; text-align: center;">
+    <h2 style="margin: 0;">Últimos vídeos</h2>
+    <hr style="border: none; height: 2px; background-color: #555; width: 100%; margin-top: 0.25rem;" />
+  </div>
+  <div class="videos-grid" style="
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 1.5rem;
+      padding: 0 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+  ">
+    <!-- Aquí JS meterá las tarjetas -->
+  </div>
+</section>
 
+    
 <!-- JAVASCRIPT -->
 <!-- JAVASCRIPT -->
 <!-- JAVASCRIPT -->
@@ -312,6 +328,6 @@ async function cargarUltimosVideosYT() {
 cargarUltimosVideosYT();
     
 </script>
-
+      
 </body>
 </html>
