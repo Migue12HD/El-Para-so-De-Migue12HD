@@ -271,14 +271,13 @@ fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,br
 
 async function cargarUltimosVideosYT() {
     const container = document.getElementById('videos-section');
-    grid.innerHTML = '';
+    const grid = container.querySelector('.videos-grid'); // mover arriba para usarlo bien
+    grid.innerHTML = ''; // limpiar contenido de grid, no de container
 
     try {
         const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12`;
         const res = await fetch(url);
         const data = await res.json();
-
-        const grid = container.querySelector('.videos-grid');
 
         if (!data.items || !data.items.length) {
             container.innerHTML += '<p style="text-align: center; color: #777;">No hay vídeos disponibles.</p>';
