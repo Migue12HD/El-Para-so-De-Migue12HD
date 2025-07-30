@@ -168,23 +168,6 @@
             text-align: center;
             user-select: none;
         }
-
-        .separador {
-        border: none;
-        height: 2px;
-        background-color: #555;
-        width: 100%;
-        margin: 2rem 0 1rem;
-        }
-
-        .titulo-ultimos {
-        text-align: center;
-        margin: 0 0 2rem;
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: white;
-        }
-        
     </style>
 </head>
 <body>
@@ -215,11 +198,7 @@
         <div>MÁS INFORMACIÓN</div>
     </nav>
 
-    <section class="videos" id="videos-section">
-    <hr class="separador" />
-    <h2 class="titulo-ultimos">Últimos vídeos</h2>
-    <div class="videos-grid" id="videos-grid"></div>
-    </section>
+    <section class="videos" id="videos-section"></section>
 
     <script>
         const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
@@ -239,14 +218,14 @@
             subscribed = !subscribed;
             subsNumber += subscribed ? 1 : -1;
             if (subsNumber < 0) subsNumber = 0;
-            subsCount.textContent = `${subsNumber} suscriptores`;
+            subsCount.textContent = ${subsNumber} suscriptores;
             subscribeBtn.textContent = subscribed ? 'Suscrito' : 'Suscribirse';
             subscribeBtn.classList.toggle('subscribed', subscribed);
         });
 
-        fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey}`)
+        fetch(https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings&id=${canalID}&key=${apiKey})
             .then(response => {
-                if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                if (!response.ok) throw new Error(HTTP error ${response.status});
                 return response.json();
             })
             .then(data => {
@@ -256,16 +235,16 @@
                 const canal = data.items[0];
 
                 if (canal.brandingSettings.image?.bannerExternalUrl) {
-                    bannerDiv.style.backgroundImage = `url(${canal.brandingSettings.image.bannerExternalUrl})`;
+                    bannerDiv.style.backgroundImage = url(${canal.brandingSettings.image.bannerExternalUrl});
                 }
 
                 avatarImg.src = canal.snippet.thumbnails.high.url;
-                avatarImg.alt = `Foto de perfil de ${canal.snippet.title}`;
+                avatarImg.alt = Foto de perfil de ${canal.snippet.title};
                 profileName.textContent = canal.snippet.title;
 
                 subsNumber = parseInt(canal.statistics.subscriberCount) || 0;
-                subsCount.textContent = `${subsNumber.toLocaleString()} suscriptores`;
-                videoCount.textContent = `${parseInt(canal.statistics.videoCount).toLocaleString()} vídeos`;
+                subsCount.textContent = ${subsNumber.toLocaleString()} suscriptores;
+                videoCount.textContent = ${parseInt(canal.statistics.videoCount).toLocaleString()} vídeos;
             })
             .catch(error => {
                 console.error('Error al cargar datos del canal:', error);
@@ -274,46 +253,63 @@
 
         const videosSection = document.getElementById('videos-section');
 
-async function cargarUltimosVideosYT() {
-    const grid = document.getElementById('videos-grid');
-    grid.innerHTML = ""; // Limpiamos el grid solo
+        async function cargarUltimosVideosYT() {
+            const container = document.getElementById('videos-section');
+            container.innerHTML = 
+                <hr style="border: none; height: 2px; background-color: #555; width: 100%; margin: 2rem 0 1rem;" />
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <h2 style="margin: 0;">Últimos vídeos</h2>
+                </div>
+                <div class="videos-grid" style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                    gap: 20px;
+                    padding: 0 1rem 2rem;
+                    max-width: 1300px;
+                    margin: 0 auto;
+                "></div>
+            ;
 
-    try {
-        const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12`;
-        const res = await fetch(url);
-        const data = await res.json();
+            try {
+                const url = https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${canalID}&part=snippet&order=date&type=video&maxResults=12;
+                const res = await fetch(url);
+                const data = await res.json();
 
-        if (!data.items || !data.items.length) {
-            grid.innerHTML = '<p style="text-align: center; color: #777;">No hay vídeos disponibles.</p>';
-            return;
+                const grid = container.querySelector('.videos-grid');
+
+                if (!data.items || !data.items.length) {
+                    container.innerHTML += '<p style="text-align: center; color: #777;">No hay vídeos disponibles.</p>';
+                    return;
+                }
+
+                data.items.forEach(video => {
+                    const videoId = video.id.videoId;
+                    const titulo = video.snippet.title;
+                    const thumbnail = https://i.ytimg.com/vi/${videoId}/hqdefault.jpg;
+                    const urlPersonalizada = /ver.html?v=${videoId};
+
+                    const card = document.createElement('div');
+                    card.className = 'video-card';
+
+                    card.innerHTML = 
+                        <a href="${urlPersonalizada}" style="text-decoration: none; color: white;">
+                            <img src="${thumbnail}" alt="${titulo}" style="width: 100%; display: block;" />
+                            <div style="padding: 0.75rem;">
+                                <h3 style="font-size: 1rem; margin: 0;">${titulo}</h3>
+                            </div>
+                        </a>
+                    ;
+
+                    grid.appendChild(card); // NO SE TOCA
+                });
+
+            } catch (error) {
+                console.error("Error al cargar vídeos del canal:", error);
+                container.innerHTML += '<p style="text-align: center; color: red;">Error al cargar vídeos.</p>';
+            }
         }
 
-        data.items.forEach(video => {
-            const videoId = video.id.videoId;
-            const titulo = video.snippet.title;
-            const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-            const urlPersonalizada = `/ver.html?v=${videoId}`;
-
-            const card = document.createElement('div');
-            card.className = 'video-card';
-
-            card.innerHTML = `
-                <a href="${urlPersonalizada}" style="text-decoration: none; color: white;">
-                    <img src="${thumbnail}" alt="${titulo}" style="width: 100%; display: block;" />
-                    <div style="padding: 0.75rem;">
-                        <h3 style="font-size: 1rem; margin: 0;">${titulo}</h3>
-                    </div>
-                </a>
-            `;
-
-            grid.appendChild(card); // NO SE TOCA
-        });
-
-    } catch (error) {
-        console.error("Error al cargar vídeos del canal:", error);
-        grid.innerHTML = '<p style="text-align: center; color: red;">Error al cargar vídeos.</p>';
-    }
-}
+        cargarUltimosVideosYT();
     </script>
 </body>
 </html>
