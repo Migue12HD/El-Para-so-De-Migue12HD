@@ -119,7 +119,6 @@
     border-radius: 0;
     overflow: hidden;
     border: none;
-    display: flex;
     flex-direction: column;
     transition: transform 0.3s ease;
 }
@@ -147,9 +146,7 @@
 }
 
 .videos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-    gap: 1.5rem;
+    display: block; /* o nada */
     padding: 0 2rem;
     max-width: 1400px;
     margin: 0 auto;
@@ -292,13 +289,14 @@ container.innerHTML = `
         const data = await res.json();
 
 const grid = container.querySelector('.videos-grid');
-grid.style.display = 'grid';
-grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(360px, 1fr))';
+
+// Si quieres columna única:
+grid.style.display = 'flex';
+grid.style.flexDirection = 'column';
 grid.style.gap = '1.5rem';
 grid.style.padding = '0 2rem';
 grid.style.maxWidth = '1400px';
 grid.style.margin = '0 auto';
-
 
         if (!data.items || !data.items.length) {
             container.innerHTML += '<p style="text-align: center; color: #777;">No hay vídeos disponibles.</p>';
