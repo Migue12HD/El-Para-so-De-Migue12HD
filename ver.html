@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ver Video</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    #video-container {
+      width: 100%;
+      max-width: 1280px;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      background: black;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .error {
+      color: red;
+      font-size: 20px;
+      margin-top: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div id="video-container">
+    <video id="video-player" controls autoplay></video>
+    <h1 id="video-title"></h1>
+  </div>
+
+  <script>
+    // Base de datos de videos
+    const videoData = {
+      "video1": {
+        url: "https://bafybeidwsbi7vbu5geqhqerhe2q2szzoinb6js2ashssuwfnenrwkdf2x4.ipfs.dweb.link?filename=recorte_2k60.mp4",
+        titulo: "Recorte 2K 60FPS"
+      },
+      "video2": {
+        url: "https://ipfs.io/ipfs/XXXXXX/video2.mp4",
+        titulo: "Otro Video de Ejemplo"
+      }
+      // Agregá más aquí
+    };
+
+    // Obtener el parámetro 'v' de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoId = urlParams.get('v');
+
+    const video = document.getElementById('video-player');
+    const title = document.getElementById('video-title');
+
+    if (videoId && videoData[videoId]) {
+      const data = videoData[videoId];
+      video.src = data.url;
+      title.textContent = data.titulo;
+    } else {
+      document.getElementById('video-container').innerHTML =
+        "<p class='error'>⚠️ Video no encontrado.</p>";
+    }
+  </script>
+</body>
+</html>
