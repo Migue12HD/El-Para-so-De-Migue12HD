@@ -167,72 +167,76 @@
         return "hace un momento";
     }
 
-    async function cargarComentarios() {
-        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
+async function cargarComentarios() {
+    const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
 
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
 
-            const contenedor = document.getElementById("comentarios");
-            contenedor.innerHTML = "<h3>Comentarios</h3>";
+        const contenedor = document.getElementById("comentarios");
+        contenedor.innerHTML = "<h3>Comentarios</h3>";
 
-            data.items.forEach(item => {
-                const c = item.snippet.topLevelComment.snippet;
-                const tiempo = tiempoRelativo(c.publishedAt);
+        data.items.forEach(item => {
+            const c = item.snippet.topLevelComment.snippet;
+            const tiempo = tiempoRelativo(c.publishedAt);
 
-                const div = document.createElement("div");
-                div.className = "comentario";
+            // Verificar si tiene corazón del creador (esto NO funcionará si usás solo apiKey)
+            const heart = c.creatorHearted ? `<img src="corazon.png" alt="❤️" style="width:18px; height:18px; margin-left:5px;">` : "";
 
-                div.innerHTML = `
-                    <div class="cabecera">
-                        <img src="${c.authorProfileImageUrl}" alt="avatar">
-                        <strong>${c.authorDisplayName}</strong>
-                        <span style="font-size: 0.8em; color: #ccc;">${tiempo}</span>
-                    </div>
-                    <p class="texto">${c.textDisplay}</p>
-                    <div class="acciones">
-                        <button class="like-button">
-                            <img src="like.png" alt="like">
-                            <span>${c.likeCount || 0}</span>
-                        </button>
-                    </div>
-                `;
+            const div = document.createElement("div");
+            div.className = "comentario";
 
-                if (item.replies && item.replies.comments.length > 0) {
-                    item.replies.comments.forEach(reply => {
-                        const r = reply.snippet;
-                        const t2 = tiempoRelativo(r.publishedAt);
+            div.innerHTML = `
+                <div class="cabecera">
+                    <img src="${c.authorProfileImageUrl}" alt="avatar">
+                    <strong>${c.authorDisplayName}</strong>
+                    ${heart}
+                    <span style="font-size: 0.8em; color: #ccc;">${tiempo}</span>
+                </div>
+                <p class="texto">${c.textDisplay}</p>
+                <div class="acciones">
+                    <button class="like-button">
+                        <img src="like.png" alt="like">
+                        <span>${c.likeCount || 0}</span>
+                    </button>
+                </div>
+            `;
 
-                        const respuesta = document.createElement("div");
-                        respuesta.className = "respuesta";
-                        respuesta.innerHTML = `
-                            <div class="cabecera">
-                                <img src="${r.authorProfileImageUrl}" alt="avatar">
-                                <strong>${r.authorDisplayName}</strong>
-                                <span style="font-size: 0.75em; color: #ccc;">${t2}</span>
-                            </div>
-                            <p class="texto">${r.textDisplay}</p>
-                            <div class="acciones">
-                                <button class="like-button">
-                                    <img src="like.png" alt="like">
-                                    <span>${r.likeCount || 0}</span>
-                                </button>
-                            </div>
-                        `;
-                        div.appendChild(respuesta);
-                    });
-                }
+            if (item.replies && item.replies.comments.length > 0) {
+                item.replies.comments.forEach(reply => {
+                    const r = reply.snippet;
+                    const t2 = tiempoRelativo(r.publishedAt);
 
-                contenedor.appendChild(div);
-            });
+                    const respuesta = document.createElement("div");
+                    respuesta.className = "respuesta";
+                    respuesta.innerHTML = `
+                        <div class="cabecera">
+                            <img src="${r.authorProfileImageUrl}" alt="avatar">
+                            <strong>${r.authorDisplayName}</strong>
+                            <span style="font-size: 0.75em; color: #ccc;">${t2}</span>
+                        </div>
+                        <p class="texto">${r.textDisplay}</p>
+                        <div class="acciones">
+                            <button class="like-button">
+                                <img src="like.png" alt="like">
+                                <span>${r.likeCount || 0}</span>
+                            </button>
+                        </div>
+                    `;
+                    div.appendChild(respuesta);
+                });
+            }
 
-        } catch (err) {
-            console.error("Error cargando comentarios:", err);
-            document.getElementById("comentarios").innerHTML += "<p>Error al cargar comentarios.</p>";
-        }
+            contenedor.appendChild(div);
+        });
+
+    } catch (err) {
+        console.error("Error cargando comentarios:", err);
+        document.getElementById("comentarios").innerHTML += "<p>Error al cargar comentarios.</p>";
     }
-
+}
+    
     if (videoId) cargarComentarios();
 </script>
 </body>
