@@ -27,6 +27,36 @@
             margin-top: 0;
             font-size: 1.8rem;
         }
+        #login-btn {
+            background-color: #4285F4;
+            color: white;
+            padding: 0.6rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+        #comment-box {
+            margin-top: 1rem;
+        }
+        #comment-input {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        #post-btn {
+            background-color: #34A853;
+            color: white;
+            padding: 0.6rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -36,25 +66,91 @@
 
         <div id="comentarios">
             <h3>Comentarios</h3>
-            <!-- Comentarios se cargarán dinámicamente -->
+            <button id="login-btn">Iniciar sesión con Google</button>
+            
+            <div id="comment-box" class="hidden">
+                <textarea id="comment-input" rows="4" placeholder="Escribe tu comentario aquí..."></textarea>
+                <button id="post-btn">Publicar comentario en YouTube</button>
+            </div>
         </div>
     </div>
 
     <script src="https://apis.google.com/js/api.js"></script>
     <script>
-        // 1. Obtener el ID del video desde la URL (por ejemplo: ver.html?v=abc123)
+        const CLIENT_ID = "494694687289-nivedohl29ggmk96tudlenripgp5eoqr.apps.googleusercontent.com";
+        const SCOPES = "https://www.googleapis.com/auth/youtube.force-ssl";
+
         const params = new URLSearchParams(window.location.search);
         const videoId = params.get("v");
         const titulo = params.get("t") || "Video sin título";
 
-        // 2. Insertar el video
         const player = document.getElementById("player");
         player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
-
-        // 3. Mostrar el título
         document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
 
-        // (Opcional) Luego acá podrías insertar los comentarios con OAuth2 si querés
+        const loginBtn = document.getElementById("login-btn");
+        const commentBox = document.getElementById("comment-box");
+        const postBtn = document.getElementById("post-btn");
+        const commentInput = document.getElementById("comment-input");
+
+        let GoogleAuth;
+
+        function handleAuthClick() {
+            GoogleAuth.signIn();
+        }
+
+        function postComment() {
+            const commentText = commentInput.value.trim();
+            if (!commentText) return alert("Comentario vacío");
+
+            gapi.client.youtube.commentThreads.insert({
+                part: "snippet",
+                resource: {
+                    snippet: {
+                        videoId: videoId,
+                        topLevelComment: {
+                            snippet: {
+                                textOriginal: commentText
+                            }
+                        }
+                    }
+                }
+            }).then(response => {
+                alert("Comentario publicado correctamente");
+                commentInput.value = "";
+            }, error => {
+                console.error("Error al comentar:", error);
+                alert("Error al publicar comentario.");
+            });
+        }
+
+        function initClient() {
+            gapi.client.init({
+                clientId: CLIENT_ID,
+                scope: SCOPES
+            }).then(() => {
+                GoogleAuth = gapi.auth2.getAuthInstance();
+
+                // Mostrar botón de comentario si ya está autenticado
+                if (GoogleAuth.isSignedIn.get()) {
+                    loginBtn.classList.add("hidden");
+                    commentBox.classList.remove("hidden");
+                }
+
+                // Escuchar cambios en login
+                GoogleAuth.isSignedIn.listen(isSignedIn => {
+                    if (isSignedIn) {
+                        loginBtn.classList.add("hidden");
+                        commentBox.classList.remove("hidden");
+                    }
+                });
+
+                loginBtn.onclick = handleAuthClick;
+                postBtn.onclick = postComment;
+            });
+        }
+
+        gapi.load("client:auth2", initClient);
     </script>
 </body>
 </html>
