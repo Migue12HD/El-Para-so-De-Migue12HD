@@ -163,22 +163,41 @@ function tiempoRelativo(fechaISO) {
 }
 
 async function cargarComentarios() {
-    if (!videoId || !token) return;
-    const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&maxResults=20`;
+    if (!videoId) return;
+
+    let url = '';
+    let headers = {};
+
+    if (accessToken) {
+        url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&id&videoId=${videoId}&maxResults=20`;
+        headers = { 'Authorization': `Bearer ${accessToken}` };
+    } else {
+        // Petición pública incluye replies para mostrar todo excepto corazones
+        url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&maxResults=20`;
+    }
+
     try {
-        const res = await fetch(url, {
-            headers: {
-                Authorization: `Bearer ${token}`
+        const res = await fetch(url, { headers });
+        if (!res.ok) {
+            if (res.status === 401) {
+                comentariosContenedor.innerHTML += "<p>Necesitas iniciar sesión para ver detalles privados como corazones.</p>";
+                return;
             }
-        });
+            throw new Error(`HTTP ${res.status} - ${res.statusText}`);
+        }
+
         const data = await res.json();
-        const contenedor = document.getElementById("comentarios");
-        data.items.forEach(item => {
+        comentariosContenedor.innerHTML = "<h3>Comentarios</h3>";
+
+        for (const item of data.items) {
             const c = item.snippet.topLevelComment.snippet;
             const tiempo = tiempoRelativo(c.publishedAt);
-            const heart = c.creatorHearted ? `<img src="corazon.png" alt="❤️" class="heart-icon">` : '';
-            const div = document.createElement("div");
-            div.className = "comentario";
+
+            // Mostrar corazón SOLO si hay token y creatorHearted es true
+            const heart = (accessToken && c.creatorHearted) ? `<img src="corazon.png" alt="❤️" class="heart-icon">` : '';
+
+            const div = document.createElement('div');
+            div.className = 'comentario';
             div.innerHTML = `
                 <div class="cabecera">
                     <img src="${c.authorProfileImageUrl}" alt="avatar">
@@ -194,15 +213,41 @@ async function cargarComentarios() {
                     </button>
                 </div>
             `;
-            contenedor.appendChild(div);
-        });
+
+            // Mostrar respuestas siempre que existan (públicas)
+            if (item.replies && item.replies.comments.length > 0) {
+                item.replies.comments.forEach(reply => {
+                    const r = reply.snippet;
+                    const t2 = tiempoRelativo(r.publishedAt);
+                    const respuesta = document.createElement('div');
+                    respuesta.className = 'respuesta';
+                    respuesta.innerHTML = `
+                        <div class="cabecera">
+                            <img src="${r.authorProfileImageUrl}" alt="avatar">
+                            <strong>${r.authorDisplayName}</strong>
+                            <span style="font-size: 0.75em; color: #ccc;">${t2}</span>
+                        </div>
+                        <p class="texto">${r.textDisplay}</p>
+                        <div class="acciones">
+                            <button class="like-button">
+                                <img src="like.png" alt="like">
+                                <span>${r.likeCount || 0}</span>
+                            </button>
+                        </div>
+                    `;
+                    div.appendChild(respuesta);
+                });
+            }
+
+            comentariosContenedor.appendChild(div);
+        }
     } catch (err) {
         console.error('Error al cargar comentarios:', err);
-        document.getElementById("comentarios").innerHTML += `<p>Error: ${err.message}</p>`;
+        comentariosContenedor.innerHTML += `<p>Error al cargar comentarios: ${err.message}</p>`;
     }
 }
-
-if (token) cargarComentarios();
+    
+cargarComentarios();
 </script>
 </body>
 </html>
