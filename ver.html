@@ -1,80 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Ver Video</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-
-    #video-container {
-      width: 100%;
-      max-width: 1280px;
-    }
-
-    video {
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      background: black;
-    }
-
-    h1 {
-      margin-top: 20px;
-      font-size: 24px;
-      text-align: center;
-    }
-
-    .error {
-      color: red;
-      font-size: 20px;
-      margin-top: 100px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Ver video</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 2rem;
+        }
+        iframe {
+            width: 100%;
+            height: 560px;
+            border: none;
+            margin-bottom: 2rem;
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+    </style>
 </head>
 <body>
-  <div id="video-container">
-    <video id="video-player" controls autoplay></video>
-    <h1 id="video-title"></h1>
-  </div>
+    <div class="container">
+        <h2 id="tituloVideo">Cargando título...</h2>
+        <iframe id="player" allowfullscreen></iframe>
 
-  <script>
-    // Base de datos de videos
-    const videoData = {
-      "video1": {
-        url: "https://bafybeidwsbi7vbu5geqhqerhe2q2szzoinb6js2ashssuwfnenrwkdf2x4.ipfs.dweb.link?filename=recorte_2k60.mp4",
-        titulo: "Recorte 2K 60FPS"
-      },
-      "video2": {
-        url: "https://ipfs.io/ipfs/XXXXXX/video2.mp4",
-        titulo: "Otro Video de Ejemplo"
-      }
-      // Agregá más aquí
-    };
+        <div id="comentarios">
+            <h3>Comentarios</h3>
+            <!-- Comentarios se cargarán dinámicamente -->
+        </div>
+    </div>
 
-    // Obtener el parámetro 'v' de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const videoId = urlParams.get('v');
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+        // 1. Obtener el ID del video desde la URL (por ejemplo: ver.html?v=abc123)
+        const params = new URLSearchParams(window.location.search);
+        const videoId = params.get("v");
+        const titulo = params.get("t") || "Video sin título";
 
-    const video = document.getElementById('video-player');
-    const title = document.getElementById('video-title');
+        // 2. Insertar el video
+        const player = document.getElementById("player");
+        player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
-    if (videoId && videoData[videoId]) {
-      const data = videoData[videoId];
-      video.src = data.url;
-      title.textContent = data.titulo;
-    } else {
-      document.getElementById('video-container').innerHTML =
-        "<p class='error'>⚠️ Video no encontrado.</p>";
-    }
-  </script>
+        // 3. Mostrar el título
+        document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
+
+        // (Opcional) Luego acá podrías insertar los comentarios con OAuth2 si querés
+    </script>
 </body>
 </html>
