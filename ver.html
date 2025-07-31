@@ -119,6 +119,22 @@
     </style>
 </head>
 <body>
+
+<script>
+    // Capturar el token del fragmento de la URL
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+
+    if (accessToken) {
+        console.log('ACCESS TOKEN:', accessToken); // Lo ves en la consola del navegador (F12)
+        // Guardarlo si querés reutilizarlo
+        sessionStorage.setItem('yt_access_token', accessToken);
+        // Limpiar la URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+</script>
+    
 <div class="container">
     <h2 id="tituloVideo">Cargando título...</h2>
     <iframe id="player" allowfullscreen></iframe>
