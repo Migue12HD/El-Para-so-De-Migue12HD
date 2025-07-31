@@ -140,6 +140,17 @@
     const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
     const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
 
+// Capturar el token del fragmento de la URL (después del #)
+const hash = window.location.hash.substring(1);
+const hashParams = new URLSearchParams(hash);
+const accessToken = hashParams.get('access_token');
+
+if (accessToken) {
+    sessionStorage.setItem('yt_access_token', accessToken);
+    // Limpiar el fragmento (esto es lo que evita que el video no se cargue)
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+}
+    
     const params = new URLSearchParams(window.location.search);
     const videoId = params.get("v");
     const titulo = params.get("t") || "Video sin título";
