@@ -76,7 +76,7 @@
     </div>
 
     <script src="https://apis.google.com/js/api.js"></script>
-   <script>
+<script>
     const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
     const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
 
@@ -88,7 +88,7 @@
     document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
     async function cargarComentarios() {
-        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&key=${apiKey}&maxResults=10`;
+        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
 
         try {
             const res = await fetch(url);
@@ -110,9 +110,38 @@
                 div.style.paddingBottom = "1em";
 
                 div.innerHTML = `
-                    <strong>${comment.authorDisplayName}</strong><br>
-                    <p>${comment.textDisplay}</p>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${comment.authorProfileImageUrl}" width="36" height="36" style="border-radius: 50%;">
+                        <strong>${comment.authorDisplayName}</strong>
+                    </div>
+                    <p style="margin-left: 46px;">${comment.textDisplay}</p>
                 `;
+
+                // Mostrar respuestas si hay
+                if (item.replies && item.replies.comments.length > 0) {
+                    const repliesDiv = document.createElement("div");
+                    repliesDiv.style.marginLeft = "46px";
+                    repliesDiv.style.borderLeft = "2px solid #555";
+                    repliesDiv.style.paddingLeft = "10px";
+                    repliesDiv.style.marginTop = "0.5em";
+
+                    item.replies.comments.forEach(reply => {
+                        const r = reply.snippet;
+                        const replyHTML = `
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <img src="${r.authorProfileImageUrl}" width="28" height="28" style="border-radius: 50%;">
+                                <strong style="font-size: 0.9em;">${r.authorDisplayName}</strong>
+                            </div>
+                            <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
+                        `;
+                        const replyBlock = document.createElement("div");
+                        replyBlock.innerHTML = replyHTML;
+                        repliesDiv.appendChild(replyBlock);
+                    });
+
+                    div.appendChild(repliesDiv);
+                }
+
                 contenedor.appendChild(div);
             });
         } catch (error) {
