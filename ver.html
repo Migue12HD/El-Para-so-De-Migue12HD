@@ -76,81 +76,52 @@
     </div>
 
     <script src="https://apis.google.com/js/api.js"></script>
-    <script>
-        const CLIENT_ID = "494694687289-nivedohl29ggmk96tudlenripgp5eoqr.apps.googleusercontent.com";
-        const SCOPES = "https://www.googleapis.com/auth/youtube.force-ssl";
+   <script>
+    const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
+    const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
 
-        const params = new URLSearchParams(window.location.search);
-        const videoId = params.get("v");
-        const titulo = params.get("t") || "Video sin título";
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get("v");
+    const titulo = params.get("t") || "Video sin título";
 
-        const player = document.getElementById("player");
-        player.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
-        document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
+    document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
+    document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
-        const loginBtn = document.getElementById("login-btn");
-        const commentBox = document.getElementById("comment-box");
-        const postBtn = document.getElementById("post-btn");
-        const commentInput = document.getElementById("comment-input");
+    async function cargarComentarios() {
+        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&key=${apiKey}&maxResults=10`;
 
-        let GoogleAuth;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
 
-        function handleAuthClick() {
-            GoogleAuth.signIn();
-        }
+            const contenedor = document.getElementById("comentarios");
+            contenedor.innerHTML = ""; // limpiar
 
-        function postComment() {
-            const commentText = commentInput.value.trim();
-            if (!commentText) return alert("Comentario vacío");
+            if (!data.items || data.items.length === 0) {
+                contenedor.innerHTML = "<p>No hay comentarios disponibles.</p>";
+                return;
+            }
 
-            gapi.client.youtube.commentThreads.insert({
-                part: "snippet",
-                resource: {
-                    snippet: {
-                        videoId: videoId,
-                        topLevelComment: {
-                            snippet: {
-                                textOriginal: commentText
-                            }
-                        }
-                    }
-                }
-            }).then(response => {
-                alert("Comentario publicado correctamente");
-                commentInput.value = "";
-            }, error => {
-                console.error("Error al comentar:", error);
-                alert("Error al publicar comentario.");
+            data.items.forEach(item => {
+                const comment = item.snippet.topLevelComment.snippet;
+                const div = document.createElement("div");
+                div.style.borderBottom = "1px solid #333";
+                div.style.margin = "1em 0";
+                div.style.paddingBottom = "1em";
+
+                div.innerHTML = `
+                    <strong>${comment.authorDisplayName}</strong><br>
+                    <p>${comment.textDisplay}</p>
+                `;
+                contenedor.appendChild(div);
             });
+        } catch (error) {
+            console.error("Error cargando comentarios:", error);
+            document.getElementById("comentarios").innerHTML = "<p>Error al cargar comentarios.</p>";
         }
+    }
 
-        function initClient() {
-            gapi.client.init({
-                clientId: CLIENT_ID,
-                scope: SCOPES
-            }).then(() => {
-                GoogleAuth = gapi.auth2.getAuthInstance();
-
-                // Mostrar botón de comentario si ya está autenticado
-                if (GoogleAuth.isSignedIn.get()) {
-                    loginBtn.classList.add("hidden");
-                    commentBox.classList.remove("hidden");
-                }
-
-                // Escuchar cambios en login
-                GoogleAuth.isSignedIn.listen(isSignedIn => {
-                    if (isSignedIn) {
-                        loginBtn.classList.add("hidden");
-                        commentBox.classList.remove("hidden");
-                    }
-                });
-
-                loginBtn.onclick = handleAuthClick;
-                postBtn.onclick = postComment;
-            });
-        }
-
-        gapi.load("client:auth2", initClient);
-    </script>
+    if (videoId) cargarComentarios();
+</script>
 </body>
 </html>
