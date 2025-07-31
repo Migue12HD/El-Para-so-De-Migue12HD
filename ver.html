@@ -77,6 +77,17 @@
 
     <script src="https://apis.google.com/js/api.js"></script>
 <script>
+
+    const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
+    const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
+
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get("v");
+    const titulo = params.get("t") || "Video sin título";
+
+    document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
+    document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+    
     function tiempoRelativo(fechaISO) {
         const fecha = new Date(fechaISO);
         const ahora = new Date();
