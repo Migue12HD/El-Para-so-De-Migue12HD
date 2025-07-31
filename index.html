@@ -291,7 +291,7 @@ async function cargarUltimosVideosYT() {
             const videoId = video.id.videoId;
             const titulo = video.snippet.title;
             const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-            const urlPersonalizada = `/ver.html?v=${videoId}`;
+            const urlPersonalizada = `ver.html?v=${videoId}`;
 
             const card = document.createElement('div');
             card.className = 'video-card';
