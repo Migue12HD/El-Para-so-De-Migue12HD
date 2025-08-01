@@ -27,44 +27,12 @@
             margin-top: 0;
             font-size: 1.8rem;
         }
-        #login-btn {
-            background-color: #4285F4;
-            color: white;
-            padding: 0.6rem 1rem;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            border-radius: 5px;
-        }
-        #comment-box {
-            margin-top: 1rem;
-        }
-        #comment-input {
-            width: 100%;
-            padding: 0.8rem;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        #post-btn {
-            background-color: #34A853;
-            color: white;
-            padding: 0.6rem 1rem;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            border-radius: 5px;
-        }
-        .hidden {
-            display: none;
-        }
-
         .icono-like {
-            width: 36px;
-            height: 36px;
+            width: 18px;
+            height: 18px;
             vertical-align: middle;
             margin-right: 4px;
         }
-        
     </style>
 </head>
 <body>
@@ -74,102 +42,96 @@
 
         <div id="comentarios">
             <h3>Comentarios</h3>
-            <button id="login-btn">Iniciar sesión con Google</button>
-            
-            <div id="comment-box" class="hidden">
-                <textarea id="comment-input" rows="4" placeholder="Escribe tu comentario aquí..."></textarea>
-                <button id="post-btn">Publicar comentario en YouTube</button>
-            </div>
+            <p>Cargando comentarios públicos...</p>
         </div>
     </div>
 
-    <script src="https://apis.google.com/js/api.js"></script>
-<script>
-    const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
-    const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
+    <script>
+        const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
+        const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
 
-    const params = new URLSearchParams(window.location.search);
-    const videoId = params.get("v");
-    const titulo = params.get("t") || "Video sin título";
+        const params = new URLSearchParams(window.location.search);
+        const videoId = params.get("v");
+        const titulo = params.get("t") || "Video sin título";
 
-    document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
-    document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+        document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
+        document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
-   async function cargarComentarios() {
-        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
+        async function cargarComentarios() {
+            const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
 
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
 
-            const contenedor = document.getElementById("comentarios");
-            contenedor.innerHTML = "";
+                const contenedor = document.getElementById("comentarios");
+                contenedor.innerHTML = "<h3>Comentarios</h3>";
 
-            if (!data.items || data.items.length === 0) {
-                contenedor.innerHTML = "<p>No hay comentarios disponibles.</p>";
-                return;
-            }
-
-            data.items.forEach(item => {
-                const comment = item.snippet.topLevelComment.snippet;
-                const likeCount = comment.likeCount || 0;
-
-                const div = document.createElement("div");
-                div.style.borderBottom = "1px solid #333";
-                div.style.margin = "1em 0";
-                div.style.paddingBottom = "1em";
-
-                div.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <img src="${comment.authorProfileImageUrl}" width="36" height="36" style="border-radius: 50%;">
-                        <strong>${comment.authorDisplayName}</strong>
-                    </div>
-                    <p style="margin-left: 46px;">${comment.textDisplay}</p>
-                    <p style="margin-left: 46px; font-size: 0.85em; color: #ccc;">
-                        <img src="like.png" width="14" height="14" style="vertical-align: text-bottom;"> ${likeCount} likes
-                    </p>
-                `;
-
-                // Mostrar respuestas si hay
-                if (item.replies && item.replies.comments.length > 0) {
-                    const repliesDiv = document.createElement("div");
-                    repliesDiv.style.marginLeft = "46px";
-                    repliesDiv.style.borderLeft = "2px solid #555";
-                    repliesDiv.style.paddingLeft = "10px";
-                    repliesDiv.style.marginTop = "0.5em";
-
-                    item.replies.comments.forEach(reply => {
-                        const r = reply.snippet;
-                        const replyLikes = r.likeCount || 0;
-
-                        const replyHTML = `
-                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
-                                <img src="${r.authorProfileImageUrl}" width="28" height="28" style="border-radius: 50%;">
-                                <strong style="font-size: 0.9em;">${r.authorDisplayName}</strong>
-                            </div>
-                            <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
-                            <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
-                                <img src="like.png" class="icono-like"> ${replyLikes} likes
-                            </p>
-                        `;
-
-                        const replyBlock = document.createElement("div");
-                        replyBlock.innerHTML = replyHTML;
-                        repliesDiv.appendChild(replyBlock);
-                    });
-
-                    div.appendChild(repliesDiv);
+                if (!data.items || data.items.length === 0) {
+                    contenedor.innerHTML += "<p>No hay comentarios disponibles.</p>";
+                    return;
                 }
 
-                contenedor.appendChild(div);
-            });
-        } catch (error) {
-            console.error("Error cargando comentarios:", error);
-            document.getElementById("comentarios").innerHTML = "<p>Error al cargar comentarios.</p>";
-        }
-    }
+                data.items.forEach(item => {
+                    const comment = item.snippet.topLevelComment.snippet;
+                    const likeCount = comment.likeCount || 0;
 
-    if (videoId) cargarComentarios();
-</script>
+                    const div = document.createElement("div");
+                    div.style.borderBottom = "1px solid #333";
+                    div.style.margin = "1em 0";
+                    div.style.paddingBottom = "1em";
+
+                    div.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <img src="${comment.authorProfileImageUrl}" width="36" height="36" style="border-radius: 50%;">
+                            <strong>${comment.authorDisplayName}</strong>
+                        </div>
+                        <p style="margin-left: 46px;">${comment.textDisplay}</p>
+                        <p style="margin-left: 46px; font-size: 0.85em; color: #ccc;">
+                            <img src="like.png" class="icono-like"> ${likeCount} likes
+                        </p>
+                    `;
+
+                    // Mostrar respuestas públicas (si están incluidas)
+                    if (item.replies && item.replies.comments.length > 0) {
+                        const repliesDiv = document.createElement("div");
+                        repliesDiv.style.marginLeft = "46px";
+                        repliesDiv.style.borderLeft = "2px solid #555";
+                        repliesDiv.style.paddingLeft = "10px";
+                        repliesDiv.style.marginTop = "0.5em";
+
+                        item.replies.comments.forEach(reply => {
+                            const r = reply.snippet;
+                            const replyLikes = r.likeCount || 0;
+
+                            const replyHTML = `
+                                <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                    <img src="${r.authorProfileImageUrl}" width="28" height="28" style="border-radius: 50%;">
+                                    <strong style="font-size: 0.9em;">${r.authorDisplayName}</strong>
+                                </div>
+                                <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
+                                <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
+                                    <img src="like.png" class="icono-like"> ${replyLikes} likes
+                                </p>
+                            `;
+
+                            const replyBlock = document.createElement("div");
+                            replyBlock.innerHTML = replyHTML;
+                            repliesDiv.appendChild(replyBlock);
+                        });
+
+                        div.appendChild(repliesDiv);
+                    }
+
+                    contenedor.appendChild(div);
+                });
+            } catch (error) {
+                console.error("Error cargando comentarios:", error);
+                document.getElementById("comentarios").innerHTML = "<p>Error al cargar comentarios.</p>";
+            }
+        }
+
+        if (videoId) cargarComentarios();
+    </script>
 </body>
 </html>
