@@ -40,10 +40,18 @@
         <iframe id="player" allowfullscreen></iframe>
         <h3 id="tituloVideo">Cargando título...</h3>
         <!--Nombre y foto del canal.-->
-        <div id="infoCanal" style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-            <img id="fotoPerfil" src="" alt="Foto de perfil" width="48" height="48" style="border-radius: 50%; margin-right: 12px;">
-            <span id="nombreCanal" style="font-size: 1.1rem; font-weight: 500;"></span>
-        </div>
+<div id="infoCanal" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: center;">
+        <img id="fotoPerfil" src="" alt="Foto de perfil" width="48" height="48" style="border-radius: 50%; margin-right: 12px;">
+        <span id="nombreCanal" style="font-size: 1.1rem; font-weight: 500;"></span>
+    </div>
+    <div id="likeDislikeStats" style="font-size: 0.95rem; color: #ccc; text-align: right;">
+        👍 <span id="likeCount">?</span> &nbsp;&nbsp;
+        👎 <span id="dislikeCount">?</span>
+    </div>
+</div>
+
+        <!--Comentarios.-->
         <div id="comentarios">
             <h3>Comentarios</h3>
             <p>Cargando comentarios públicos...</p>
@@ -61,22 +69,28 @@
         document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
         document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
-    async function cargarTitulo() {
-        const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.items && data.items.length > 0) {
-                const tituloReal = data.items[0].snippet.title;
-                document.getElementById("tituloVideo").textContent = tituloReal;
-            } else {
-                document.getElementById("tituloVideo").textContent = "Título no encontrado.";
-            }
-        } catch (error) {
-            console.error("Error al cargar título:", error);
-            document.getElementById("tituloVideo").textContent = "Error al cargar título.";
+async function cargarTitulo() {
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${apiKey}`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.items && data.items.length > 0) {
+            const info = data.items[0];
+            const tituloReal = info.snippet.title;
+            const likes = info.statistics.likeCount;
+
+            document.getElementById("tituloVideo").textContent = tituloReal;
+            document.getElementById("likeCount").textContent = likes;
+        } else {
+            document.getElementById("tituloVideo").textContent = "Título no encontrado.";
+            document.getElementById("likeCount").textContent = "?";
         }
+    } catch (error) {
+        console.error("Error al cargar título:", error);
+        document.getElementById("tituloVideo").textContent = "Error al cargar título.";
+        document.getElementById("likeCount").textContent = "?";
     }
+}
 
 async function cargarInfoCanal() {
     const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${canalID}&key=${apiKey}`;
@@ -162,6 +176,21 @@ async function cargarInfoCanal() {
                         div.appendChild(repliesDiv);
                     }
 
+async function cargarLikesDislikes() {
+    const url = `https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        document.getElementById("likeCount").textContent = data.likes || "?";
+        document.getElementById("dislikeCount").textContent = data.dislikes || "?";
+    } catch (error) {
+        console.error("Error al cargar likes/dislikes:", error);
+        document.getElementById("likeCount").textContent = "?";
+        document.getElementById("dislikeCount").textContent = "?";
+    }
+}
+                    
                     contenedor.appendChild(div);
                 });
             } catch (error) {
@@ -173,8 +202,10 @@ async function cargarInfoCanal() {
 if (videoId) {
     cargarTitulo();
     cargarInfoCanal();
+    cargarLikesDislikes();
     cargarComentarios();
 }
+        
     </script>
 </body>
 </html>
