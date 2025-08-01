@@ -57,6 +57,14 @@
         .hidden {
             display: none;
         }
+
+        .icono-like {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+        
     </style>
 </head>
 <body>
@@ -141,7 +149,7 @@
                             </div>
                             <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
                             <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
-                                <img src="like.png" width="50" height="50" style="vertical-align: text-bottom;"> ${replyLikes} likes
+                                <img src="like.png" class="icono-like"> ${replyLikes} likes
                             </p>
                         `;
 
