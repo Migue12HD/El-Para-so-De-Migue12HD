@@ -58,147 +58,148 @@
         </div>
     </div>
 
-    <script>
-        const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
-        const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
+ <script>
+    const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
+    const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get("v");
 
-        const params = new URLSearchParams(window.location.search);
-        const videoId = params.get("v");
+    document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
-        document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
-
-        async function cargarTitulo() {
-            const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${apiKey}`;
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.items && data.items.length > 0) {
-                    const info = data.items[0];
-                    const tituloReal = info.snippet.title;
-                    const likes = info.statistics.likeCount;
-
-                    document.getElementById("tituloVideo").textContent = tituloReal;
-                    document.getElementById("likeCount").textContent = likes;
-                } else {
-                    document.getElementById("tituloVideo").textContent = "Título no encontrado.";
-                }
-            } catch (error) {
-                console.error("Error al cargar título:", error);
-                document.getElementById("tituloVideo").textContent = "Error al cargar título.";
+    async function cargarTitulo() {
+        const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.items && data.items.length > 0) {
+                const info = data.items[0];
+                const tituloReal = info.snippet.title;
+                document.getElementById("tituloVideo").textContent = tituloReal;
+            } else {
+                document.getElementById("tituloVideo").textContent = "Título no encontrado.";
             }
+        } catch (error) {
+            console.error("Error al cargar título:", error);
+            document.getElementById("tituloVideo").textContent = "Error al cargar título.";
         }
-
-        async function cargarInfoCanal() {
-            const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${canalID}&key=${apiKey}`;
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.items && data.items.length > 0) {
-                    const canal = data.items[0].snippet;
-                    document.getElementById("fotoPerfil").src = canal.thumbnails.default.url;
-                    document.getElementById("nombreCanal").textContent = canal.title;
-                } else {
-                    document.getElementById("nombreCanal").textContent = "Canal no encontrado";
-                }
-            } catch (error) {
-                console.error("Error al cargar canal:", error);
-                document.getElementById("nombreCanal").textContent = "Error al cargar canal";
-            }
-        }
-
-async function cargarLikesDislikes() {
-    const proxy = "https://corsproxy.io/?";
-    const url = `${proxy}https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-        console.log("Likes/Dislikes recibidos:", data);
-
-        document.getElementById("likeCount").textContent = data.likes || "?";
-        document.getElementById("dislikeCount").textContent = data.dislikes || "?";
-    } catch (error) {
-        console.error("Error al cargar likes/dislikes:", error);
-        document.getElementById("likeCount").textContent = "?";
-        document.getElementById("dislikeCount").textContent = "?";
     }
-        async function cargarComentarios() {
-            const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
 
-                const contenedor = document.getElementById("comentarios");
-                contenedor.innerHTML = "<h3>Comentarios</h3>";
+    async function cargarInfoCanal() {
+        const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${canalID}&key=${apiKey}`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.items && data.items.length > 0) {
+                const canal = data.items[0].snippet;
+                document.getElementById("fotoPerfil").src = canal.thumbnails.default.url;
+                document.getElementById("nombreCanal").textContent = canal.title;
+            } else {
+                document.getElementById("nombreCanal").textContent = "Canal no encontrado";
+            }
+        } catch (error) {
+            console.error("Error al cargar canal:", error);
+            document.getElementById("nombreCanal").textContent = "Error al cargar canal";
+        }
+    }
 
-                if (!data.items || data.items.length === 0) {
-                    contenedor.innerHTML += "<p>No hay comentarios disponibles.</p>";
-                    return;
+    async function cargarLikesDislikes() {
+        const proxy = "https://corsproxy.io/?";
+        const url = `${proxy}https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            console.log("Likes/Dislikes recibidos:", data);
+
+            document.getElementById("likeCount").textContent = data.likes || "?";
+            document.getElementById("dislikeCount").textContent = data.dislikes || "?";
+        } catch (error) {
+            console.error("Error al cargar likes/dislikes:", error);
+            document.getElementById("likeCount").textContent = "?";
+            document.getElementById("dislikeCount").textContent = "?";
+        }
+    }
+
+    async function cargarComentarios() {
+        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+
+            const contenedor = document.getElementById("comentarios");
+            contenedor.innerHTML = "<h3>Comentarios</h3>";
+
+            if (!data.items || data.items.length === 0) {
+                contenedor.innerHTML += "<p>No hay comentarios disponibles.</p>";
+                return;
+            }
+
+            data.items.forEach(item => {
+                const comment = item.snippet.topLevelComment.snippet;
+                const likeCount = comment.likeCount || 0;
+
+                const div = document.createElement("div");
+                div.style.borderBottom = "1px solid #333";
+                div.style.margin = "1em 0";
+                div.style.paddingBottom = "1em";
+
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${comment.authorProfileImageUrl}" width="36" height="36" style="border-radius: 50%;">
+                        <strong>${comment.authorDisplayName}</strong>
+                    </div>
+                    <p style="margin-left: 46px;">${comment.textDisplay}</p>
+                    <p style="margin-left: 46px; font-size: 0.85em; color: #ccc;">
+                        <img src="like.png" class="icono-like"> ${likeCount}
+                    </p>
+                `;
+
+                if (item.replies && item.replies.comments.length > 0) {
+                    const repliesDiv = document.createElement("div");
+                    repliesDiv.style.marginLeft = "46px";
+                    repliesDiv.style.borderLeft = "2px solid #555";
+                    repliesDiv.style.paddingLeft = "10px";
+                    repliesDiv.style.marginTop = "0.5em";
+
+                    item.replies.comments.forEach(reply => {
+                        const r = reply.snippet;
+                        const replyLikes = r.likeCount || 0;
+
+                        const replyHTML = `
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <img src="${r.authorProfileImageUrl}" width="28" height="28" style="border-radius: 50%;">
+                                <strong style="font-size: 0.9em;">${r.authorDisplayName}</strong>
+                            </div>
+                            <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
+                            <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
+                                <img src="like.png" class="icono-like"> ${replyLikes} likes
+                            </p>
+                        `;
+
+                        const replyBlock = document.createElement("div");
+                        replyBlock.innerHTML = replyHTML;
+                        repliesDiv.appendChild(replyBlock);
+                    });
+
+                    div.appendChild(repliesDiv);
                 }
 
-                data.items.forEach(item => {
-                    const comment = item.snippet.topLevelComment.snippet;
-                    const likeCount = comment.likeCount || 0;
-
-                    const div = document.createElement("div");
-                    div.style.borderBottom = "1px solid #333";
-                    div.style.margin = "1em 0";
-                    div.style.paddingBottom = "1em";
-
-                    div.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <img src="${comment.authorProfileImageUrl}" width="36" height="36" style="border-radius: 50%;">
-                            <strong>${comment.authorDisplayName}</strong>
-                        </div>
-                        <p style="margin-left: 46px;">${comment.textDisplay}</p>
-                        <p style="margin-left: 46px; font-size: 0.85em; color: #ccc;">
-                            <img src="like.png" class="icono-like"> ${likeCount}
-                        </p>
-                    `;
-
-                    if (item.replies && item.replies.comments.length > 0) {
-                        const repliesDiv = document.createElement("div");
-                        repliesDiv.style.marginLeft = "46px";
-                        repliesDiv.style.borderLeft = "2px solid #555";
-                        repliesDiv.style.paddingLeft = "10px";
-                        repliesDiv.style.marginTop = "0.5em";
-
-                        item.replies.comments.forEach(reply => {
-                            const r = reply.snippet;
-                            const replyLikes = r.likeCount || 0;
-
-                            const replyHTML = `
-                                <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
-                                    <img src="${r.authorProfileImageUrl}" width="28" height="28" style="border-radius: 50%;">
-                                    <strong style="font-size: 0.9em;">${r.authorDisplayName}</strong>
-                                </div>
-                                <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
-                                <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
-                                    <img src="like.png" class="icono-like"> ${replyLikes} likes
-                                </p>
-                            `;
-
-                            const replyBlock = document.createElement("div");
-                            replyBlock.innerHTML = replyHTML;
-                            repliesDiv.appendChild(replyBlock);
-                        });
-
-                        div.appendChild(repliesDiv);
-                    }
-
-                    contenedor.appendChild(div);
-                });
-            } catch (error) {
-                console.error("Error cargando comentarios:", error);
-                document.getElementById("comentarios").innerHTML = "<p>Error al cargar comentarios.</p>";
-            }
+                contenedor.appendChild(div);
+            });
+        } catch (error) {
+            console.error("Error cargando comentarios:", error);
+            document.getElementById("comentarios").innerHTML = "<p>Error al cargar comentarios.</p>";
         }
+    }
 
-        if (videoId) {
-            cargarTitulo();
-            cargarInfoCanal();
-            cargarLikesDislikes();
-            cargarComentarios();
-        }
-    </script>
+    // Iniciar carga solo si hay videoId
+    if (videoId) {
+        cargarTitulo();
+        cargarInfoCanal();
+        cargarLikesDislikes();
+        cargarComentarios();
+    } else {
+        console.warn("No se encontró el parámetro ?v en la URL.");
+    }
+</script>
 </body>
 </html>
