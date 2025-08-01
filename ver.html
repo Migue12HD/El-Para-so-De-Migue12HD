@@ -57,6 +57,23 @@
         document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
         document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
+    async function cargarTitulo() {
+        const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.items && data.items.length > 0) {
+                const tituloReal = data.items[0].snippet.title;
+                document.getElementById("tituloVideo").textContent = tituloReal;
+            } else {
+                document.getElementById("tituloVideo").textContent = "Título no encontrado.";
+            }
+        } catch (error) {
+            console.error("Error al cargar título:", error);
+            document.getElementById("tituloVideo").textContent = "Error al cargar título.";
+        }
+    }
+        
         async function cargarComentarios() {
             const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
 
@@ -131,7 +148,10 @@
             }
         }
 
-        if (videoId) cargarComentarios();
+    if (videoId) {
+        cargarTitulo();
+        cargarComentarios();
+    }
     </script>
 </body>
 </html>
