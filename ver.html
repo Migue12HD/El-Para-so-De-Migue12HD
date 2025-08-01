@@ -66,6 +66,34 @@
 
     document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
 
+    function tiempoDesde(fechaISO) {
+        const ahora = new Date();
+        const fecha = new Date(fechaISO);
+        const segundos = Math.floor((ahora - fecha) / 1000);
+
+        const divisiones = [
+            { tiempo: 60, nombre: "segundo" },
+            { tiempo: 60, nombre: "minuto" },
+            { tiempo: 24, nombre: "hora" },
+            { tiempo: 30, nombre: "día" },
+            { tiempo: 12, nombre: "mes" },
+            { tiempo: Infinity, nombre: "año" }
+        ];
+
+        let unidad = "segundo";
+        let cantidad = segundos;
+
+        for (let i = 0; i < divisiones.length; i++) {
+            if (cantidad < divisiones[i].tiempo) break;
+            cantidad = Math.floor(cantidad / divisiones[i].tiempo);
+            unidad = divisiones[i].nombre;
+        }
+
+        if (unidad === "mes" && cantidad !== 1) unidad = "meses";
+
+        return `hace ${cantidad} ${unidad}`;
+    }
+
     async function cargarTitulo() {
         const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
         try {
@@ -102,25 +130,23 @@
         }
     }
 
-async function cargarLikesDislikes() {
-    const urlOriginal = `https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
-    const urlProxied = `https://api.allorigins.win/get?url=${encodeURIComponent(urlOriginal)}`;
+    async function cargarLikesDislikes() {
+        const urlOriginal = `https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
+        const urlProxied = `https://api.allorigins.win/get?url=${encodeURIComponent(urlOriginal)}`;
 
-    try {
-        const res = await fetch(urlProxied);
-        const dataWrapped = await res.json();
-        const data = JSON.parse(dataWrapped.contents);
+        try {
+            const res = await fetch(urlProxied);
+            const dataWrapped = await res.json();
+            const data = JSON.parse(dataWrapped.contents);
 
-        console.log("Datos likes/dislikes:", data);
-
-document.getElementById("likeCount").textContent = data.likes !== undefined ? data.likes : "?";
-document.getElementById("dislikeCount").textContent = data.dislikes !== undefined ? data.dislikes : "?";
-    } catch (error) {
-        console.error("Error al cargar likes/dislikes:", error);
-        document.getElementById("likeCount").textContent = "?";
-        document.getElementById("dislikeCount").textContent = "?";
+            document.getElementById("likeCount").textContent = data.likes !== undefined ? data.likes : "?";
+            document.getElementById("dislikeCount").textContent = data.dislikes !== undefined ? data.dislikes : "?";
+        } catch (error) {
+            console.error("Error al cargar likes/dislikes:", error);
+            document.getElementById("likeCount").textContent = "?";
+            document.getElementById("dislikeCount").textContent = "?";
+        }
     }
-}
 
     async function cargarComentarios() {
         const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
@@ -139,6 +165,7 @@ document.getElementById("dislikeCount").textContent = data.dislikes !== undefine
             data.items.forEach(item => {
                 const comment = item.snippet.topLevelComment.snippet;
                 const likeCount = comment.likeCount || 0;
+                const fechaTexto = tiempoDesde(comment.publishedAt);
 
                 const div = document.createElement("div");
                 div.style.borderBottom = "1px solid #333";
@@ -154,6 +181,7 @@ document.getElementById("dislikeCount").textContent = data.dislikes !== undefine
                     <p style="margin-left: 46px; font-size: 0.85em; color: #ccc;">
                         <img src="like.png" class="icono-like"> ${likeCount}
                     </p>
+                    <p style="margin-left: 46px; font-size: 0.75em; color: #888;">${fechaTexto}</p>
                 `;
 
                 if (item.replies && item.replies.comments.length > 0) {
@@ -166,6 +194,7 @@ document.getElementById("dislikeCount").textContent = data.dislikes !== undefine
                     item.replies.comments.forEach(reply => {
                         const r = reply.snippet;
                         const replyLikes = r.likeCount || 0;
+                        const fechaRespuesta = tiempoDesde(r.publishedAt);
 
                         const replyHTML = `
                             <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
@@ -176,6 +205,7 @@ document.getElementById("dislikeCount").textContent = data.dislikes !== undefine
                             <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
                                 <img src="like.png" class="icono-like"> ${replyLikes} likes
                             </p>
+                            <p style="margin-left: 36px; font-size: 0.7em; color: #888;">${fechaRespuesta}</p>
                         `;
 
                         const replyBlock = document.createElement("div");
@@ -194,7 +224,6 @@ document.getElementById("dislikeCount").textContent = data.dislikes !== undefine
         }
     }
 
-    // Iniciar carga solo si hay videoId
     if (videoId) {
         cargarTitulo();
         cargarInfoCanal();
@@ -206,3 +235,4 @@ document.getElementById("dislikeCount").textContent = data.dislikes !== undefine
 </script>
 </body>
 </html>
+
