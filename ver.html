@@ -106,20 +106,21 @@
             }
         }
 
-        async function cargarLikesDislikes() {
-            const url = `https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                document.getElementById("likeCount").textContent = data.likes || "?";
-                document.getElementById("dislikeCount").textContent = data.dislikes || "?";
-            } catch (error) {
-                console.error("Error al cargar likes/dislikes:", error);
-                document.getElementById("likeCount").textContent = "?";
-                document.getElementById("dislikeCount").textContent = "?";
-            }
-        }
+async function cargarLikesDislikes() {
+    const url = `https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        console.log("Respuesta likes/dislikes:", data); // <--- log importante
 
+        document.getElementById("likeCount").textContent = data.likes || "?";
+        document.getElementById("dislikeCount").textContent = data.dislikes || "?";
+    } catch (error) {
+        console.error("Error al cargar likes/dislikes:", error);
+        document.getElementById("likeCount").textContent = "?";
+        document.getElementById("dislikeCount").textContent = "?";
+    }
+}
         async function cargarComentarios() {
             const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
             try {
