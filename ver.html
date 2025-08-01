@@ -23,6 +23,10 @@
             border: none;
             margin-bottom: 2rem;
         }
+        h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
         .comentario {
             border-bottom: 1px solid #333;
             margin: 1em 0;
@@ -70,7 +74,27 @@
             cursor: pointer;
             font-size: 1rem;
             border-radius: 5px;
-            margin-bottom: 1rem;
+        }
+        #comment-box {
+            margin-top: 1rem;
+        }
+        #comment-input {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        #post-btn {
+            background-color: #34A853;
+            color: white;
+            padding: 0.6rem 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+        .hidden {
+            display: none;
         }
         .like-button {
             display: inline-flex;
@@ -92,111 +116,91 @@
         .like-button:hover {
             background: rgba(255, 255, 255, 0.1);
         }
-        .heart-icon {
-            width: 18px;
-            height: 18px;
-            margin-left: 5px;
-        }
     </style>
 </head>
 <body>
+
 <div class="container">
     <h2 id="tituloVideo">Cargando título...</h2>
     <iframe id="player" allowfullscreen></iframe>
+
     <div id="comentarios">
         <h3>Comentarios</h3>
         <button id="login-btn">Iniciar sesión con Google</button>
+        <div id="comment-box" class="hidden">
+            <textarea id="comment-input" rows="4" placeholder="Escribe tu comentario aquí..."></textarea>
+            <button id="post-btn">Publicar comentario en YouTube</button>
+        </div>
     </div>
 </div>
+
+<script src="https://apis.google.com/js/api.js"></script>
 <script>
-const CLIENT_ID = '494694687289-nivedohl29ggmk96tudlenripgp5eoqr.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/youtube.force-ssl';
 
-const params = new URLSearchParams(window.location.search);
-const videoId = params.get('v');
-const titulo = params.get('t') || 'Video sin título';
+    const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
+    const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
 
-document.getElementById('tituloVideo').textContent = decodeURIComponent(titulo);
-document.getElementById('player').src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+// Capturar el token del fragmento de la URL (después del #)
+const hash = window.location.hash.substring(1);
+const hashParams = new URLSearchParams(hash);
+const accessToken = hashParams.get('access_token');
 
-(function capturaToken() {
-    const hash = window.location.hash.substring(1);
-    const hashParams = new URLSearchParams(hash);
-    const token = hashParams.get('access_token');
-    if (token) {
-        sessionStorage.setItem('yt_access_token', token);
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
-})();
-
-const token = sessionStorage.getItem('yt_access_token');
-
-const loginBtn = document.getElementById('login-btn');
-if (token) loginBtn.style.display = 'none';
-
-loginBtn.addEventListener('click', () => {
-    const redirectUri = window.location.origin + window.location.pathname + window.location.search;
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}` +
-        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-        `&response_type=token&scope=${encodeURIComponent(SCOPES)}` +
-        `&include_granted_scopes=true&prompt=consent`;
-    window.location.href = url;
-});
-
-function tiempoRelativo(fechaISO) {
-    const fecha = new Date(fechaISO);
-    const ahora = new Date();
-    const diff = Math.floor((ahora - fecha) / 1000);
-    const unidades = [
-        { nombre: 'año', segundos: 31536000 },
-        { nombre: 'mes', segundos: 2592000 },
-        { nombre: 'día', segundos: 86400 },
-        { nombre: 'hora', segundos: 3600 },
-        { nombre: 'minuto', segundos: 60 },
-        { nombre: 'segundo', segundos: 1 }
-    ];
-    for (let u of unidades) {
-        const cantidad = Math.floor(diff / u.segundos);
-        if (cantidad >= 1) return `hace ${cantidad} ${u.nombre}${cantidad > 1 ? 's' : ''}`;
-    }
-    return 'hace un momento';
+if (accessToken) {
+    sessionStorage.setItem('yt_access_token', accessToken);
+    // Limpiar el fragmento (esto es lo que evita que el video no se cargue)
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
 }
+    
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get("v");
+    const titulo = params.get("t") || "Video sin título";
 
-async function cargarComentarios() {
-    if (!videoId) return;
+    document.getElementById("tituloVideo").textContent = decodeURIComponent(titulo);
+    document.getElementById("player").src = https://www.youtube.com/embed/${videoId}?rel=0;
 
-    let url = '';
-    let headers = {};
+    function tiempoRelativo(fechaISO) {
+        const fecha = new Date(fechaISO);
+        const ahora = new Date();
+        const diff = Math.floor((ahora - fecha) / 1000);
 
-    if (accessToken) {
-        url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&id&videoId=${videoId}&maxResults=20`;
-        headers = { 'Authorization': `Bearer ${accessToken}` };
-    } else {
-        // Petición pública: añade tu API key aquí
-        url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&maxResults=20&key=${API_KEY}`;
-    }
+        const unidades = [
+            { nombre: 'año', segundos: 31536000 },
+            { nombre: 'mes', segundos: 2592000 },
+            { nombre: 'día', segundos: 86400 },
+            { nombre: 'hora', segundos: 3600 },
+            { nombre: 'minuto', segundos: 60 },
+            { nombre: 'segundo', segundos: 1 }
+        ];
 
-    try {
-        const res = await fetch(url, { headers });
-        if (!res.ok) {
-            if (res.status === 401) {
-                comentariosContenedor.innerHTML += "<p>Necesitas iniciar sesión para ver detalles privados como corazones.</p>";
-                return;
-            }
-            throw new Error(`HTTP ${res.status} - ${res.statusText}`);
+        for (let u of unidades) {
+            const cantidad = Math.floor(diff / u.segundos);
+            if (cantidad >= 1) return hace ${cantidad} ${u.nombre}${cantidad > 1 ? 's' : ''};
         }
 
-        const data = await res.json();
-        comentariosContenedor.innerHTML = "<h3>Comentarios</h3>";
+        return "hace un momento";
+    }
 
-        for (const item of data.items) {
+async function cargarComentarios() {
+    const url = https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const contenedor = document.getElementById("comentarios");
+        contenedor.innerHTML = "<h3>Comentarios</h3>";
+
+        data.items.forEach(item => {
             const c = item.snippet.topLevelComment.snippet;
             const tiempo = tiempoRelativo(c.publishedAt);
-            const heart = (accessToken && c.creatorHearted) ? `<img src="corazon.png" alt="❤️" class="heart-icon">` : '';
 
-            const div = document.createElement('div');
-            div.className = 'comentario';
-            div.innerHTML = `
+            // Verificar si tiene corazón del creador (esto NO funcionará si usás solo apiKey)
+            const heart = c.creatorHearted ? <img src="corazon.png" alt="❤️" style="width:18px; height:18px; margin-left:5px;"> : "";
+
+            const div = document.createElement("div");
+            div.className = "comentario";
+
+            div.innerHTML = 
                 <div class="cabecera">
                     <img src="${c.authorProfileImageUrl}" alt="avatar">
                     <strong>${c.authorDisplayName}</strong>
@@ -210,15 +214,16 @@ async function cargarComentarios() {
                         <span>${c.likeCount || 0}</span>
                     </button>
                 </div>
-            `;
+            ;
 
             if (item.replies && item.replies.comments.length > 0) {
                 item.replies.comments.forEach(reply => {
                     const r = reply.snippet;
                     const t2 = tiempoRelativo(r.publishedAt);
-                    const respuesta = document.createElement('div');
-                    respuesta.className = 'respuesta';
-                    respuesta.innerHTML = `
+
+                    const respuesta = document.createElement("div");
+                    respuesta.className = "respuesta";
+                    respuesta.innerHTML = 
                         <div class="cabecera">
                             <img src="${r.authorProfileImageUrl}" alt="avatar">
                             <strong>${r.authorDisplayName}</strong>
@@ -231,21 +236,21 @@ async function cargarComentarios() {
                                 <span>${r.likeCount || 0}</span>
                             </button>
                         </div>
-                    `;
+                    ;
                     div.appendChild(respuesta);
                 });
             }
 
-            comentariosContenedor.appendChild(div);
-        }
+            contenedor.appendChild(div);
+        });
+
     } catch (err) {
-        console.error('Error al cargar comentarios:', err);
-        comentariosContenedor.innerHTML += `<p>Error al cargar comentarios: ${err.message}</p>`;
+        console.error("Error cargando comentarios:", err);
+        document.getElementById("comentarios").innerHTML += "<p>Error al cargar comentarios.</p>";
     }
 }
-
     
-cargarComentarios();
+    if (videoId) cargarComentarios();
 </script>
 </body>
 </html>
