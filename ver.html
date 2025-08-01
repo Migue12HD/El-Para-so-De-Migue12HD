@@ -39,6 +39,11 @@
     <div class="container">
         <iframe id="player" allowfullscreen></iframe>
         <h3 id="tituloVideo">Cargando título...</h3>
+        <!--Nombre y foto del canal.-->
+        <div id="infoCanal" style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+            <img id="fotoPerfil" src="" alt="Foto de perfil" width="48" height="48" style="border-radius: 50%; margin-right: 12px;">
+            <span id="nombreCanal" style="font-size: 1.1rem; font-weight: 500;"></span>
+        </div>
         <div id="comentarios">
             <h3>Comentarios</h3>
             <p>Cargando comentarios públicos...</p>
@@ -72,6 +77,24 @@
             document.getElementById("tituloVideo").textContent = "Error al cargar título.";
         }
     }
+
+async function cargarInfoCanal() {
+    const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${canalID}&key=${apiKey}`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.items && data.items.length > 0) {
+            const canal = data.items[0].snippet;
+            document.getElementById("fotoPerfil").src = canal.thumbnails.default.url;
+            document.getElementById("nombreCanal").textContent = canal.title;
+        } else {
+            document.getElementById("nombreCanal").textContent = "Canal no encontrado";
+        }
+    } catch (error) {
+        console.error("Error al cargar canal:", error);
+        document.getElementById("nombreCanal").textContent = "Error al cargar canal";
+    }
+}
         
         async function cargarComentarios() {
             const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
@@ -147,10 +170,11 @@
             }
         }
 
-    if (videoId) {
-        cargarTitulo();
-        cargarComentarios();
-    }
+if (videoId) {
+    cargarTitulo();
+    cargarInfoCanal();
+    cargarComentarios();
+}
     </script>
 </body>
 </html>
