@@ -58,7 +58,7 @@
         </div>
     </div>
 
- <script>
+<script>
     const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
     const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
     const params = new URLSearchParams(window.location.search);
@@ -71,27 +71,18 @@
         const fecha = new Date(fechaISO);
         const segundos = Math.floor((ahora - fecha) / 1000);
 
-        const divisiones = [
-            { tiempo: 60, nombre: "segundo" },
-            { tiempo: 60, nombre: "minuto" },
-            { tiempo: 24, nombre: "hora" },
-            { tiempo: 30, nombre: "día" },
-            { tiempo: 12, nombre: "mes" },
-            { tiempo: Infinity, nombre: "año" }
-        ];
+        const minutos = Math.floor(segundos / 60);
+        const horas = Math.floor(minutos / 60);
+        const dias = Math.floor(horas / 24);
+        const meses = Math.floor(dias / 30);
+        const años = Math.floor(meses / 12);
 
-        let unidad = "segundo";
-        let cantidad = segundos;
-
-        for (let i = 0; i < divisiones.length; i++) {
-            if (cantidad < divisiones[i].tiempo) break;
-            cantidad = Math.floor(cantidad / divisiones[i].tiempo);
-            unidad = divisiones[i].nombre;
-        }
-
-        if (unidad === "mes" && cantidad !== 1) unidad = "meses";
-
-        return `hace ${cantidad} ${unidad}`;
+        if (años >= 1) return `hace ${años} año${años > 1 ? 's' : ''}`;
+        if (meses >= 1) return `hace ${meses} mes${meses > 1 ? 'es' : ''}`;
+        if (dias >= 1) return `hace ${dias} día${dias > 1 ? 's' : ''}`;
+        if (horas >= 1) return `hace ${horas} hora${horas > 1 ? 's' : ''}`;
+        if (minutos >= 1) return `hace ${minutos} minuto${minutos > 1 ? 's' : ''}`;
+        return `hace ${segundos} segundo${segundos > 1 ? 's' : ''}`;
     }
 
     async function cargarTitulo() {
@@ -101,8 +92,7 @@
             const data = await res.json();
             if (data.items && data.items.length > 0) {
                 const info = data.items[0];
-                const tituloReal = info.snippet.title;
-                document.getElementById("tituloVideo").textContent = tituloReal;
+                document.getElementById("tituloVideo").textContent = info.snippet.title;
             } else {
                 document.getElementById("tituloVideo").textContent = "Título no encontrado.";
             }
@@ -175,13 +165,14 @@
                 div.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <img src="${comment.authorProfileImageUrl}" width="36" height="36" style="border-radius: 50%;">
-                        <strong>${comment.authorDisplayName}</strong>
+                        <div style="display: flex; flex-direction: column;">
+                            <span><strong>${comment.authorDisplayName}</strong> · <span style="color:#888; font-size: 0.85em;">${fechaTexto}</span></span>
+                        </div>
                     </div>
                     <p style="margin-left: 46px;">${comment.textDisplay}</p>
                     <p style="margin-left: 46px; font-size: 0.85em; color: #ccc;">
                         <img src="like.png" class="icono-like"> ${likeCount}
                     </p>
-                    <p style="margin-left: 46px; font-size: 0.75em; color: #888;">${fechaTexto}</p>
                 `;
 
                 if (item.replies && item.replies.comments.length > 0) {
@@ -199,13 +190,12 @@
                         const replyHTML = `
                             <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
                                 <img src="${r.authorProfileImageUrl}" width="28" height="28" style="border-radius: 50%;">
-                                <strong style="font-size: 0.9em;">${r.authorDisplayName}</strong>
+                                <span><strong style="font-size: 0.9em;">${r.authorDisplayName}</strong> · <span style="color:#888; font-size: 0.8em;">${fechaRespuesta}</span></span>
                             </div>
                             <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
                             <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
                                 <img src="like.png" class="icono-like"> ${replyLikes} likes
                             </p>
-                            <p style="margin-left: 36px; font-size: 0.7em; color: #888;">${fechaRespuesta}</p>
                         `;
 
                         const replyBlock = document.createElement("div");
@@ -235,4 +225,3 @@
 </script>
 </body>
 </html>
-
