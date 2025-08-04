@@ -129,8 +129,8 @@
             const dataWrapped = await res.json();
             const data = JSON.parse(dataWrapped.contents);
 
-            document.getElementById("likeCount").textContent = data.likes !== undefined ? data.likes : "?";
-            document.getElementById("dislikeCount").textContent = data.dislikes !== undefined ? data.dislikes : "?";
+            document.getElementById("likeCount").textContent = Number.isInteger(data.likes) ? data.likes : "?";
+            document.getElementById("dislikeCount").textContent = Number.isInteger(data.dislikes) ? data.dislikes : "?";
         } catch (error) {
             console.error("Error al cargar likes/dislikes:", error);
             document.getElementById("likeCount").textContent = "?";
