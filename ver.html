@@ -49,7 +49,11 @@
 </head>
 <body>
     <div class="container">
-        <iframe id="player" allowfullscreen></iframe>
+      <iframe id="player" allowfullscreen
+      src=""
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+      </iframe>
         <h3 id="tituloVideo">Cargando título...</h3>
 
         <!-- Bloque likes/dislikes + compartir -->
@@ -99,8 +103,8 @@
     const params = new URLSearchParams(window.location.search);
     const videoId = params.get("v");
 
-    document.getElementById("player").src = `https://www.youtube.com/embed/${videoId}?rel=0`;
-
+    document.getElementById("player").src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
+    
     function tiempoDesde(fechaISO) {
         const ahora = new Date();
         const fecha = new Date(fechaISO);
