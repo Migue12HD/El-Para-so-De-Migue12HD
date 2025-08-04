@@ -21,7 +21,7 @@
             width: 100%;
             height: 560px;
             border: none;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
         h2, h3 {
             margin-top: 0;
@@ -32,6 +32,13 @@
             vertical-align: middle;
             margin-right: 4px;
         }
+        .boton-compartir {
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -39,22 +46,40 @@
         <iframe id="player" allowfullscreen></iframe>
         <h3 id="tituloVideo">Cargando título...</h3>
 
-        <!--Nombre, foto del canal y likes/dislikes-->
+        <!-- Bloque likes/dislikes + compartir -->
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem;">
+            <div id="likeDislikeStats" style="font-size: 0.95rem; color: #ccc; display: flex; align-items: center; gap: 12px;">
+                <img src="like.png" class="icono-like"> <span id="likeCount">?</span>
+                <img src="like.png" class="icono-like" style="transform: rotate(180deg);"> <span id="dislikeCount">?</span>
+            </div>
+            <img src="compartir.png" alt="Compartir" class="boton-compartir" title="Compartir este video" onclick="mostrarModalCompartir()">
+        </div>
+
+        <!-- Nombre, foto del canal -->
         <div id="infoCanal" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
             <div style="display: flex; align-items: center;">
                 <img id="fotoPerfil" src="" alt="Foto de perfil" width="48" height="48" style="border-radius: 50%; margin-right: 12px;">
                 <span id="nombreCanal" style="font-size: 1.1rem; font-weight: 500;"></span>
             </div>
-            <div id="likeDislikeStats" style="font-size: 0.95rem; color: #ccc; text-align: right;">
-                <img src="like.png" class="icono-like"> <span id="likeCount">?</span> &nbsp;&nbsp;
-                <img src="like.png" class="icono-like" style="transform: rotate(180deg);"> <span id="dislikeCount">?</span>
-            </div>
         </div>
 
-        <!--Comentarios-->
+        <!-- Comentarios -->
         <div id="comentarios">
             <h3>Comentarios</h3>
             <p>Cargando comentarios públicos...</p>
+        </div>
+    </div>
+
+    <!-- Modal compartir -->
+    <div id="modalCompartir" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+        background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:1000;">
+        <div style="background:#222; padding:20px; border-radius:10px; width:90%; max-width:500px; text-align:center; color:white;">
+            <h3>Compartir este video</h3>
+            <input id="enlaceCompartir" type="text" readonly
+                style="width:100%; padding:8px; font-size:1rem; margin-bottom:1rem; background:#333; color:white; border:1px solid #555;">
+            <button onclick="copiarEnlace()" style="padding:8px 16px; font-size:1rem; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;">Copiar</button>
+            <button onclick="cerrarModalCompartir()" style="padding:8px 16px; font-size:1rem; background:#888; color:white; border:none; border-radius:5px; cursor:pointer; margin-left:10px;">Cerrar</button>
+            <p id="mensajeCopiado" style="margin-top:10px; font-size:0.9rem; color: #4CAF50;"></p>
         </div>
     </div>
 
@@ -197,20 +222,40 @@
                                 <img src="like.png" class="icono-like"> ${replyLikes} likes
                             </p>
                         `;
-
                         const replyBlock = document.createElement("div");
                         replyBlock.innerHTML = replyHTML;
                         repliesDiv.appendChild(replyBlock);
                     });
-
                     div.appendChild(repliesDiv);
                 }
-
                 contenedor.appendChild(div);
             });
         } catch (error) {
             console.error("Error cargando comentarios:", error);
             document.getElementById("comentarios").innerHTML = "<p>Error al cargar comentarios.</p>";
+        }
+    }
+
+    function mostrarModalCompartir() {
+        const urlActual = window.location.href;
+        document.getElementById("enlaceCompartir").value = urlActual;
+        document.getElementById("mensajeCopiado").textContent = "";
+        document.getElementById("modalCompartir").style.display = "flex";
+    }
+
+    function cerrarModalCompartir() {
+        document.getElementById("modalCompartir").style.display = "none";
+    }
+
+    function copiarEnlace() {
+        const input = document.getElementById("enlaceCompartir");
+        input.select();
+        input.setSelectionRange(0, 99999);
+        try {
+            const copiado = document.execCommand("copy");
+            document.getElementById("mensajeCopiado").textContent = copiado ? "¡Copiado!" : "No se pudo copiar.";
+        } catch (err) {
+            document.getElementById("mensajeCopiado").textContent = "Error al copiar.";
         }
     }
 
