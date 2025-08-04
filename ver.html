@@ -17,13 +17,17 @@
             margin: auto;
             padding: 2rem;
         }
-        iframe {
+        #player, #miniatura {
             width: 100%;
             height: 560px;
             border: none;
             margin-bottom: 1rem;
+            display: block;
         }
-        
+        #miniatura {
+            cursor: pointer;
+            object-fit: contain;
+        }
         h2, h3 {
             margin-top: 0;
         }
@@ -33,7 +37,7 @@
             vertical-align: middle;
             margin-right: 4px;
         }
-            .icono-dislike {
+        .icono-dislike {
             width: 25px;
             height: 25px;
             vertical-align: middle;
@@ -50,33 +54,36 @@
 </head>
 <body>
     <div class="container">
-      <iframe id="player" allowfullscreen
-      src=""
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen>
-      </iframe>
+        <!-- Aquí mostramos la miniatura limpia -->
+        <img id="miniatura" alt="Miniatura del video" />
+
+        <!-- iframe oculto al principio -->
+        <iframe id="player" allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            style="display:none;">
+        </iframe>
+
         <h3 id="tituloVideo">Cargando título...</h3>
 
         <!-- Bloque likes/dislikes + compartir -->
-<!-- Sustituye este bloque por completo en tu HTML, justo donde está el original -->
-<div id="infoCanal" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-    <div style="display: flex; align-items: center;">
-        <img id="fotoPerfil" src="" alt="Foto de perfil" width="48" height="48" style="border-radius: 50%; margin-right: 12px;">
-        <span id="nombreCanal" style="font-size: 1.1rem; font-weight: 500;"></span>
-    </div>
+        <div id="infoCanal" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center;">
+                <img id="fotoPerfil" src="" alt="Foto de perfil" width="48" height="48" style="border-radius: 50%; margin-right: 12px;">
+                <span id="nombreCanal" style="font-size: 1.1rem; font-weight: 500;"></span>
+            </div>
 
-    <div style="display: flex; align-items: center; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 4px;">
-            <img src="like2.png" class="icono-like">
-            <span id="likeCount">?</span>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <img src="like2.png" class="icono-like">
+                    <span id="likeCount">?</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <img src="dislike.png" class="icono-dislike">
+                    <span id="dislikeCount">?</span>
+                </div>
+                <img src="compartir.png" alt="Compartir" class="boton-compartir" title="Compartir este video" onclick="mostrarModalCompartir()" style="width: 100px; height: 32px;">
+            </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 4px;">
-            <img src="dislike.png" class="icono-dislike">
-            <span id="dislikeCount">?</span>
-        </div>
-        <img src="compartir.png" alt="Compartir" class="boton-compartir" title="Compartir este video" onclick="mostrarModalCompartir()" style="width: 100px; height: 32px;">
-    </div>
-</div>
 
         <!-- Comentarios -->
         <div id="comentarios">
@@ -104,8 +111,29 @@
     const params = new URLSearchParams(window.location.search);
     const videoId = params.get("v");
 
-    document.getElementById("player").src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
-    
+    if (videoId) {
+        // Cargar la miniatura limpia de YouTube
+        const miniatura = document.getElementById("miniatura");
+        miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        miniatura.alt = "Miniatura limpia del video";
+        
+        // Evento clic para reemplazar la miniatura por el iframe con autoplay
+        miniatura.addEventListener("click", () => {
+            miniatura.style.display = "none";
+            const iframe = document.getElementById("player");
+            iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
+            iframe.style.display = "block";
+        });
+
+        // Carga los datos del video y canal
+        cargarTitulo();
+        cargarInfoCanal();
+        cargarLikesDislikes();
+        cargarComentarios();
+    } else {
+        console.warn("No se encontró el parámetro ?v en la URL.");
+    }
+
     function tiempoDesde(fechaISO) {
         const ahora = new Date();
         const fecha = new Date(fechaISO);
@@ -272,15 +300,6 @@
         } catch (err) {
             document.getElementById("mensajeCopiado").textContent = "Error al copiar.";
         }
-    }
-
-    if (videoId) {
-        cargarTitulo();
-        cargarInfoCanal();
-        cargarLikesDislikes();
-        cargarComentarios();
-    } else {
-        console.warn("No se encontró el parámetro ?v en la URL.");
     }
 </script>
 </body>
