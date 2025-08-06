@@ -85,6 +85,15 @@
             </div>
         </div>
 
+        <h3 id="tituloVideo">Cargando título...</h3>
+
+        <!-- Nueva sección para la descripción -->
+        <div id="descripcionVideo" style="white-space: pre-line; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; text-overflow: ellipsis;">
+            Cargando descripción...
+        </div>
+        <span id="toggleDescripcion" style="color: #4CAF50; cursor: pointer; display: none;">más</span>
+
+        
         <!-- Comentarios -->
         <div id="comentarios">
             <h3>Comentarios</h3>
@@ -153,22 +162,49 @@
         return `hace ${segundos} segundo${segundos > 1 ? 's' : ''}`;
     }
 
-    async function cargarTitulo() {
-        const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.items && data.items.length > 0) {
-                const info = data.items[0];
-                document.getElementById("tituloVideo").textContent = info.snippet.title;
-            } else {
-                document.getElementById("tituloVideo").textContent = "Título no encontrado.";
+async function cargarTitulo() {
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.items && data.items.length > 0) {
+            const info = data.items[0].snippet;
+            document.getElementById("tituloVideo").textContent = info.title;
+
+            // Mostrar las 3 primeras líneas y preparar el botón "más"
+            const descElem = document.getElementById("descripcionVideo");
+            const toggleElem = document.getElementById("toggleDescripcion");
+            descElem.textContent = info.description;
+
+            // Mostrar botón "más" solo si hay más de 3 líneas
+            if (info.description.split("\n").length > 3 || info.description.length > 200) {
+                toggleElem.style.display = "inline";
+                let expandida = false;
+                toggleElem.onclick = () => {
+                    expandida = !expandida;
+                    if (expandida) {
+                        descElem.style.overflow = "visible";
+                        descElem.style.display = "block";
+                        descElem.style.webkitLineClamp = "unset";
+                        toggleElem.textContent = "menos";
+                    } else {
+                        descElem.style.overflow = "hidden";
+                        descElem.style.display = "-webkit-box";
+                        descElem.style.webkitLineClamp = "3";
+                        toggleElem.textContent = "más";
+                    }
+                };
             }
-        } catch (error) {
-            console.error("Error al cargar título:", error);
-            document.getElementById("tituloVideo").textContent = "Error al cargar título.";
+        } else {
+            document.getElementById("tituloVideo").textContent = "Título no encontrado.";
+            document.getElementById("descripcionVideo").textContent = "";
         }
+    } catch (error) {
+        console.error("Error al cargar título:", error);
+        document.getElementById("tituloVideo").textContent = "Error al cargar título.";
+        document.getElementById("descripcionVideo").textContent = "";
     }
+}
 
     async function cargarInfoCanal() {
         const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${canalID}&key=${apiKey}`;
