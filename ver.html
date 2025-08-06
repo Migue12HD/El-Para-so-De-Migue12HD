@@ -86,16 +86,19 @@
         </div>
 
 
-<!-- Nueva línea para vistas y fecha -->
-<div id="metaVideo" style="color: #aaa; font-size: 0.9rem; margin-top: 6px;">
+<!-- Meta: vistas y fecha -->
+<div id="metaVideo" style="color: #aaa; font-size: 0.9rem; margin: 6px 0;">
     Cargando datos...
 </div>
-        
-        <!-- Nueva sección para la descripción -->
-<div id="descripcionVideo" style="white-space: pre-line; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; text-overflow: ellipsis;">
-    Cargando descripción...
+
+<!-- Descripción estilo YouTube -->
+<div id="descripcionWrapper" style="background-color: #1c1c1c; padding: 12px; border-radius: 8px; margin-bottom: 1rem;">
+    <div id="descripcionVideo" style="white-space: pre-line; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; text-overflow: ellipsis; font-size: 0.95rem; color: #ddd;">
+        Cargando descripción...
+    </div>
+    <span id="toggleDescripcion" style="color: #3ea6ff; cursor: pointer; display: none; font-size: 0.9rem;">más</span>
 </div>
-<span id="toggleDescripcion" style="color: #4CAF50; cursor: pointer; display: none;">más</span
+
 
         <!-- Comentarios -->
         <div id="comentarios">
@@ -175,12 +178,16 @@ async function cargarTitulo() {
             const stats = data.items[0].statistics;
             document.getElementById("tituloVideo").textContent = info.title;
 
+            // Meta: vistas y fecha
+            const vistas = Number(stats.viewCount).toLocaleString("es-ES");
+            const fechaTexto = tiempoDesde(info.publishedAt);
+            document.getElementById("metaVideo").textContent = `${vistas} visualizaciones · ${fechaTexto}`;
+
             // Descripción
             const descElem = document.getElementById("descripcionVideo");
             const toggleElem = document.getElementById("toggleDescripcion");
             descElem.textContent = info.description;
 
-            // Mostrar botón "más" si hay más de 3 líneas o texto largo
             if (info.description.split("\n").length > 3 || info.description.length > 200) {
                 toggleElem.style.display = "inline";
                 let expandida = false;
@@ -199,21 +206,16 @@ async function cargarTitulo() {
                     }
                 };
             }
-
-            // Meta: vistas y fecha
-            const vistas = Number(stats.viewCount).toLocaleString("es-ES");
-            const fechaTexto = tiempoDesde(info.publishedAt);
-            document.getElementById("metaVideo").textContent = `${vistas} visualizaciones · ${fechaTexto}`;
         } else {
             document.getElementById("tituloVideo").textContent = "Título no encontrado.";
-            document.getElementById("descripcionVideo").textContent = "";
             document.getElementById("metaVideo").textContent = "";
+            document.getElementById("descripcionVideo").textContent = "";
         }
     } catch (error) {
         console.error("Error al cargar título:", error);
         document.getElementById("tituloVideo").textContent = "Error al cargar título.";
-        document.getElementById("descripcionVideo").textContent = "";
         document.getElementById("metaVideo").textContent = "";
+        document.getElementById("descripcionVideo").textContent = "";
     }
 }
 
