@@ -192,7 +192,7 @@
                 const metaElem = document.getElementById("metaVideo");
 
                 // Mostrar inicialmente con "hace X tiempo"
-                metaElem.textContent = `${vistas} visualizaciones · ${fechaTexto}`;
+                metaElem.textContent = `${vistas} visualizaciones  ${fechaTexto}`;
 
                 // Descripción
                 const descElem = document.getElementById("descripcionVideo");
@@ -210,14 +210,14 @@
                             descElem.style.webkitLineClamp = "unset";
                             toggleElem.textContent = "menos";
                             // Mostrar fecha original
-                            metaElem.textContent = `${vistas} visualizaciones · Publicado el ${fechaFormateada}`;
+                            metaElem.textContent = `${vistas} visualizaciones  ${fechaFormateada}`;
                         } else {
                             descElem.style.overflow = "hidden";
                             descElem.style.display = "-webkit-box";
                             descElem.style.webkitLineClamp = "3";
                             toggleElem.textContent = "más";
                             // Volver a "hace X tiempo"
-                            metaElem.textContent = `${vistas} visualizaciones · ${fechaTexto}`;
+                            metaElem.textContent = `${vistas} visualizaciones  ${fechaTexto}`;
                         }
                     };
                 }
