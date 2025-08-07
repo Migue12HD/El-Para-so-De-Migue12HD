@@ -107,7 +107,7 @@
 
 <!-- Comentarios -->
 <div id="comentarios">
-    <h3 id="comentarios-titulo">Comentarios (0)</h3>
+    <h3 id="comentarios-titulo">0 comentarios</h3>
     <p id="comentarios-cargando">Cargando comentarios públicos...</p>
 </div>
     
@@ -287,7 +287,7 @@ async function cargarComentarios() {
         let totalComentarios = 0;
 
         if (!data.items || data.items.length === 0) {
-            titulo.textContent = "Comentarios (0)";
+            titulo.textContent = "0 comentarios";
             contenedor.innerHTML += "<p>No hay comentarios disponibles.</p>";
             return;
         }
@@ -349,7 +349,7 @@ async function cargarComentarios() {
         });
 
         // Actualizamos el número en el título
-        titulo.textContent = `Comentarios (${totalComentarios})`;
+        titulo.textContent = `${totalComentarios} comentarios`;
 
     } catch (error) {
         console.error("Error cargando comentarios:", error);
