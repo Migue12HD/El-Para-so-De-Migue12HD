@@ -105,13 +105,37 @@
 </div>
 
 
-        <!-- Comentarios -->
-        <div id="comentarios">
-            <h3 id="comment-title">Comentarios</h3>
-            <p>Cargando comentarios públicos...</p>
-        </div>
-    </div>
+<!-- Comentarios -->
+<div id="comentarios">
+    <h3 id="comment-title">Comentarios</h3>
+    <p>Cargando comentarios públicos...</p>
+</div>
+</div>
 
+<!-- Para contar cuantos comentarios -->
+    
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const observer = new MutationObserver(() => {
+      const comments = document.querySelectorAll('.comment').length;
+      const replies = document.querySelectorAll('.reply').length;
+      const total = comments + replies;
+
+      const title = document.getElementById('comment-title');
+      if (title && total > 0) {
+        title.textContent = `Comentarios (${total})`;
+        observer.disconnect(); // Detener después de actualizar
+      }
+    });
+
+    observer.observe(document.getElementById('comentarios'), {
+      childList: true,
+      subtree: true
+    });
+  });
+
+</script>
+    
     <!-- Modal compartir -->
     <div id="modalCompartir" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
         background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:1000;">
@@ -371,20 +395,7 @@
     }
 </script>
 
-<!-- Para contar cuantos comentarios -->
-    
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const comments = document.querySelectorAll('.comment').length;
-    const replies = document.querySelectorAll('.reply').length;
-    const total = comments + replies;
 
-    const title = document.getElementById('comment-title');
-    if (title && total > 0) {
-      title.textContent += ` (${total} comentario${total !== 1 ? 's' : ''})`;
-    }
-  });
-</script>
     
 </body>
 </html>
