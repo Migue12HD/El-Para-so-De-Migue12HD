@@ -110,34 +110,6 @@
     <h3 id="comment-title">Comentarios (0)</h3>
     <p>Cargando comentarios públicos...</p>
 </div>
-
-<!-- Para contar cuantos comentarios -->
-    
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const updateCommentCount = () => {
-      const comments = document.querySelectorAll('.comment').length;
-      const replies = document.querySelectorAll('.reply').length;
-      const total = comments + replies;
-
-      const title = document.getElementById('comment-title');
-      if (title) {
-        title.textContent = `Comentarios (${total})`;
-      }
-    };
-
-    // Actualizar al cargar
-    updateCommentCount();
-
-    // Observar cambios en los comentarios
-    const observer = new MutationObserver(updateCommentCount);
-    observer.observe(document.getElementById('comentarios'), {
-      childList: true,
-      subtree: true
-    });
-  });
-
-</script>
     
     <!-- Modal compartir -->
     <div id="modalCompartir" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
@@ -374,6 +346,21 @@
         }
     }
 
+    // Función que actualiza el título de comentarios
+    function actualizarTituloComentarios() {
+        const comentarios = document.querySelectorAll('.comentario');
+        const respuestas = document.querySelectorAll('.respuesta');
+        const total = comentarios.length + respuestas.length;
+
+        const titulo = document.getElementById('comment-title');
+        if (titulo) {
+            titulo.textContent = `Comentarios (${total})`;
+        }
+    }
+
+    // Llamada al final de la carga (reemplazá esto si ya lo tenés dentro de otro script)
+    document.addEventListener('DOMContentLoaded', actualizarTituloComentarios);
+    
     function mostrarModalCompartir() {
         const urlActual = window.location.href;
         document.getElementById("enlaceCompartir").value = urlActual;
