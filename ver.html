@@ -370,5 +370,21 @@
         }
     }
 </script>
+
+<!-- Para contar cuantos comentarios -->
+    
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const comments = document.querySelectorAll('.comment').length;
+    const replies = document.querySelectorAll('.reply').length;
+    const total = comments + replies;
+
+    const title = document.getElementById('comment-title');
+    if (title && total > 0) {
+      title.textContent += ` (${total} comentario${total !== 1 ? 's' : ''})`;
+    }
+  });
+</script>
+    
 </body>
 </html>
