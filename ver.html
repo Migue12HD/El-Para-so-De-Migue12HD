@@ -170,56 +170,69 @@
         return `hace ${segundos} segundo${segundos > 1 ? 's' : ''}`;
     }
 
-async function cargarTitulo() {
-    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${apiKey}`;
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.items && data.items.length > 0) {
-            const info = data.items[0].snippet;
-            const stats = data.items[0].statistics;
-            document.getElementById("tituloVideo").textContent = info.title;
+    async function cargarTitulo() {
+        const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${apiKey}`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.items && data.items.length > 0) {
+                const info = data.items[0].snippet;
+                const stats = data.items[0].statistics;
+                document.getElementById("tituloVideo").textContent = info.title;
 
-            // Meta: vistas y fecha
-            const vistas = Number(stats.viewCount).toLocaleString("es-ES");
-            const fechaTexto = tiempoDesde(info.publishedAt);
-            document.getElementById("metaVideo").textContent = `${vistas} visualizaciones · ${fechaTexto}`;
+                // Guardamos variables reutilizables
+                const vistas = Number(stats.viewCount).toLocaleString("es-ES");
+                const fechaOriginal = new Date(info.publishedAt);
+                const fechaFormateada = fechaOriginal.toLocaleDateString("es-ES", {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                const fechaTexto = tiempoDesde(info.publishedAt);
+                const metaElem = document.getElementById("metaVideo");
 
-            // Descripción
-            const descElem = document.getElementById("descripcionVideo");
-            const toggleElem = document.getElementById("toggleDescripcion");
-            descElem.textContent = info.description;
+                // Mostrar inicialmente con "hace X tiempo"
+                metaElem.textContent = `${vistas} visualizaciones · ${fechaTexto}`;
 
-            if (info.description.split("\n").length > 3 || info.description.length > 200) {
-                toggleElem.style.display = "inline";
-                let expandida = false;
-                toggleElem.onclick = () => {
-                    expandida = !expandida;
-                    if (expandida) {
-                        descElem.style.overflow = "visible";
-                        descElem.style.display = "block";
-                        descElem.style.webkitLineClamp = "unset";
-                        toggleElem.textContent = "menos";
-                    } else {
-                        descElem.style.overflow = "hidden";
-                        descElem.style.display = "-webkit-box";
-                        descElem.style.webkitLineClamp = "3";
-                        toggleElem.textContent = "más";
-                    }
-                };
+                // Descripción
+                const descElem = document.getElementById("descripcionVideo");
+                const toggleElem = document.getElementById("toggleDescripcion");
+                descElem.textContent = info.description;
+
+                if (info.description.split("\n").length > 3 || info.description.length > 200) {
+                    toggleElem.style.display = "inline";
+                    let expandida = false;
+                    toggleElem.onclick = () => {
+                        expandida = !expandida;
+                        if (expandida) {
+                            descElem.style.overflow = "visible";
+                            descElem.style.display = "block";
+                            descElem.style.webkitLineClamp = "unset";
+                            toggleElem.textContent = "menos";
+                            // Mostrar fecha original
+                            metaElem.textContent = `${vistas} visualizaciones · Publicado el ${fechaFormateada}`;
+                        } else {
+                            descElem.style.overflow = "hidden";
+                            descElem.style.display = "-webkit-box";
+                            descElem.style.webkitLineClamp = "3";
+                            toggleElem.textContent = "más";
+                            // Volver a "hace X tiempo"
+                            metaElem.textContent = `${vistas} visualizaciones · ${fechaTexto}`;
+                        }
+                    };
+                }
+            } else {
+                document.getElementById("tituloVideo").textContent = "Título no encontrado.";
+                document.getElementById("metaVideo").textContent = "";
+                document.getElementById("descripcionVideo").textContent = "";
             }
-        } else {
-            document.getElementById("tituloVideo").textContent = "Título no encontrado.";
+        } catch (error) {
+            console.error("Error al cargar título:", error);
+            document.getElementById("tituloVideo").textContent = "Error al cargar título.";
             document.getElementById("metaVideo").textContent = "";
             document.getElementById("descripcionVideo").textContent = "";
         }
-    } catch (error) {
-        console.error("Error al cargar título:", error);
-        document.getElementById("tituloVideo").textContent = "Error al cargar título.";
-        document.getElementById("metaVideo").textContent = "";
-        document.getElementById("descripcionVideo").textContent = "";
     }
-}
 
 
     async function cargarInfoCanal() {
