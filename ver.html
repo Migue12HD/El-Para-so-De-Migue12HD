@@ -116,18 +116,22 @@
     
 <script>
   window.addEventListener('DOMContentLoaded', () => {
-    const observer = new MutationObserver(() => {
+    const updateCommentCount = () => {
       const comments = document.querySelectorAll('.comment').length;
       const replies = document.querySelectorAll('.reply').length;
       const total = comments + replies;
 
       const title = document.getElementById('comment-title');
-      if (title && total > 0) {
+      if (title) {
         title.textContent = `Comentarios (${total})`;
-        observer.disconnect(); // Detener después de actualizar
       }
-    });
+    };
 
+    // Actualizar al cargar
+    updateCommentCount();
+
+    // Observar cambios en los comentarios
+    const observer = new MutationObserver(updateCommentCount);
     observer.observe(document.getElementById('comentarios'), {
       childList: true,
       subtree: true
