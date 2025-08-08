@@ -68,6 +68,13 @@
     </style>
 </head>
 <body>
+
+    <!-- Mis videos IPFS o eso espero-->
+    
+    <div id="lista-videos"></div>
+
+    <!-- ^^^^^ -->
+    
     <div class="container">
         <!-- Aquí mostramos la miniatura limpia -->
         <img id="miniatura" alt="Miniatura del video" />
@@ -394,10 +401,8 @@ async function cargarComentarios() {
             document.getElementById("mensajeCopiado").textContent = "Error al copiar.";
         }
     }
-</script>
 
-<script>
-const apiKey = "AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE";
+// ----- SECCIÓN IPFS -----
 
 // Lista YT ↔ IPFS
 const videos = [
@@ -459,6 +464,7 @@ videos.forEach(video => {
       });
     });
 });
+    
 </script>
     
 </body>
