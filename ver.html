@@ -152,44 +152,52 @@
         // Añade aquí todos los videos que quieras sustituir
     };
 
-    if (videoId) {
-        const videoIPFS = videosIPFS[videoId];
-        if (videoIPFS) {
-            // Mostrar video IPFS reemplazando contenido dentro del contenedor principal
-            const container = document.querySelector(".container");
-            container.innerHTML = `
-                <video id="ipfsPlayer" controls autoplay style="width:100%; height:560px; background:black;">
-                    <source src="${videoIPFS}" type="video/mp4">
-                    Tu navegador no soporta video HTML5.
-                </video>
-            `;
-            // Opcional: si quieres, aquí puedes cargar título, canal, likes y comentarios igual que abajo
-            // Si no, solo video IPFS
-        } else {
-            // Código original para mostrar miniatura, iframe, cargar título, canal, likes y comentarios
+if (videoId) {
+    const videoIPFS = videosIPFS[videoId];
+    if (videoIPFS) {
+        // Mostrar video IPFS
+        const ipfsPlayer = document.getElementById("ipfsPlayer");
+        const ipfsSource = document.getElementById("ipfsSource");
 
-            // Cargar la miniatura limpia de YouTube
-            const miniatura = document.getElementById("miniatura");
-            miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-            miniatura.alt = "Miniatura limpia del video";
+        // Ocultar miniatura e iframe
+        document.getElementById("miniatura").style.display = "none";
+        document.getElementById("player").style.display = "none";
 
-            // Evento clic para reemplazar la miniatura por el iframe con autoplay
-            miniatura.addEventListener("click", () => {
-                miniatura.style.display = "none";
-                const iframe = document.getElementById("player");
-                iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
-                iframe.style.display = "block";
-            });
+        // Setear fuente del video IPFS y mostrarlo
+        ipfsSource.src = videoIPFS;
+        ipfsPlayer.load();
+        ipfsPlayer.style.display = "block";
 
-            // Carga los datos del video y canal
-            cargarTitulo();
-            cargarInfoCanal();
-            cargarLikesDislikes();
-            cargarComentarios();
-        }
+        // Cargar también título, canal, likes, comentarios normalmente
+        cargarTitulo();
+        cargarInfoCanal();
+        cargarLikesDislikes();
+        cargarComentarios();
     } else {
-        console.warn("No se encontró el parámetro ?v en la URL.");
+        // Código original para YouTube normal
+        const miniatura = document.getElementById("miniatura");
+        miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        miniatura.alt = "Miniatura limpia del video";
+
+        miniatura.style.display = "block";
+        const iframe = document.getElementById("player");
+        iframe.style.display = "none";
+        
+        miniatura.addEventListener("click", () => {
+            miniatura.style.display = "none";
+            iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
+            iframe.style.display = "block";
+        });
+
+        cargarTitulo();
+        cargarInfoCanal();
+        cargarLikesDislikes();
+        cargarComentarios();
     }
+} else {
+    console.warn("No se encontró el parámetro ?v en la URL.");
+}
+
 
     function tiempoDesde(fechaISO) {
         const ahora = new Date();
