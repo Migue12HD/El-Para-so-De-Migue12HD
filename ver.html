@@ -52,29 +52,25 @@
         }
 
         .video-container {
-      position: relative;
-      max-width: 800px;
-      margin: 20px auto;
-      font-family: Arial, sans-serif;
-    }
+            position: relative;
+            max-width: 800px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
         .mini-yt {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      border: 2px solid #fff;
-      box-shadow: 0 0 8px rgba(0,0,0,0.5);
-    }
-        
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            border: 2px solid #fff;
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
 
     <!-- Mis videos IPFS o eso espero-->
-    
     <div id="lista-videos"></div>
 
-    <!-- ^^^^^ -->
-    
     <div class="container">
         <!-- Aquí mostramos la miniatura limpia -->
         <img id="miniatura" alt="Miniatura del video" />
@@ -107,31 +103,29 @@
             </div>
         </div>
 
-<!-- Línea divisoria -->
-<hr style="width: 100%; max-width: 100%; height: 1px; background-color: gray; border: none; margin: 10px 0;">
+        <!-- Línea divisoria -->
+        <hr style="width: 100%; max-width: 100%; height: 1px; background-color: gray; border: none; margin: 10px 0;">
         
-<!-- EL EMBED -->
+        <!-- EL EMBED -->
+        <div id="descripcionWrapper" style="background-color: #1c1c1c; padding: 12px; border-radius: 8px; margin-bottom: 1rem;">
+            <!-- Meta: vistas y fecha -->
+            <div id="metaVideo" style="color: #aaa; font-size: 0.9rem; margin: 6px 0;">
+                Cargando datos...
+            </div>
 
-<div id="descripcionWrapper" style="background-color: #1c1c1c; padding: 12px; border-radius: 8px; margin-bottom: 1rem;">
-<!-- Meta: vistas y fecha -->
-<div id="metaVideo" style="color: #aaa; font-size: 0.9rem; margin: 6px 0;">
-    Cargando datos...
-</div>
+            <!-- Descripción estilo YouTube -->
+            <div id="descripcionVideo" style="white-space: pre-line; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; text-overflow: ellipsis; font-size: 0.95rem; color: #ddd;">
+                Cargando descripción...
+            </div>
+            <span id="toggleDescripcion" style="color: #3ea6ff; cursor: pointer; display: none; font-size: 0.9rem;">más</span>
+        </div>
 
-<!-- Descripción estilo YouTube -->
-
-    <div id="descripcionVideo" style="white-space: pre-line; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; text-overflow: ellipsis; font-size: 0.95rem; color: #ddd;">
-        Cargando descripción...
+        <!-- Comentarios -->
+        <div id="comentarios">
+            <h3 id="comentarios-titulo">0 comentarios</h3>
+            <p id="comentarios-cargando">Cargando comentarios públicos...</p>
+        </div>
     </div>
-    <span id="toggleDescripcion" style="color: #3ea6ff; cursor: pointer; display: none; font-size: 0.9rem;">más</span>
-</div>
-
-
-<!-- Comentarios -->
-<div id="comentarios">
-    <h3 id="comentarios-titulo">0 comentarios</h3>
-    <p id="comentarios-cargando">Cargando comentarios públicos...</p>
-</div>
     
     <!-- Modal compartir -->
     <div id="modalCompartir" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
@@ -258,7 +252,6 @@
         }
     }
 
-
     async function cargarInfoCanal() {
         const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${canalID}&key=${apiKey}`;
         try {
@@ -295,89 +288,88 @@
         }
     }
 
-async function cargarComentarios() {
-    const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
+    async function cargarComentarios() {
+        const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
 
-        const contenedor = document.getElementById("comentarios");
-        const titulo = document.getElementById("comentarios-titulo");
-        const cargando = document.getElementById("comentarios-cargando");
-        contenedor.removeChild(cargando); // eliminamos el "Cargando..."
+            const contenedor = document.getElementById("comentarios");
+            const titulo = document.getElementById("comentarios-titulo");
+            const cargando = document.getElementById("comentarios-cargando");
+            contenedor.removeChild(cargando);
 
-        let totalComentarios = 0;
+            let totalComentarios = 0;
 
-        if (!data.items || data.items.length === 0) {
-            titulo.textContent = "0 comentarios";
-            contenedor.innerHTML += "<p>No hay comentarios disponibles.</p>";
-            return;
-        }
-
-        data.items.forEach(item => {
-            const comment = item.snippet.topLevelComment.snippet;
-            const likeCount = comment.likeCount || 0;
-            const fechaTexto = tiempoDesde(comment.publishedAt);
-            totalComentarios++; // comentario principal
-
-            const div = document.createElement("div");
-            div.style.borderBottom = "1px solid #333";
-            div.style.margin = "1em 0";
-            div.style.paddingBottom = "1em";
-
-            div.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <img src="${comment.authorProfileImageUrl}" width="36" height="36" style="border-radius: 50%;">
-                    <div style="display: flex; flex-direction: column;">
-                        <span><strong>${comment.authorDisplayName}</strong> · <span style="color:#888; font-size: 0.85em;">${fechaTexto}</span></span>
-                    </div>
-                </div>
-                <p style="margin-left: 46px;">${comment.textDisplay}</p>
-                <p style="margin-left: 46px; font-size: 0.85em; color: #ccc;">
-                    <img src="like2.png" class="icono-like"> ${likeCount}
-                </p>
-            `;
-
-            if (item.replies && item.replies.comments.length > 0) {
-                const repliesDiv = document.createElement("div");
-                repliesDiv.style.marginLeft = "46px";
-                repliesDiv.style.borderLeft = "2px solid #555";
-                repliesDiv.style.paddingLeft = "10px";
-                repliesDiv.style.marginTop = "0.5em";
-
-                item.replies.comments.forEach(reply => {
-                    const r = reply.snippet;
-                    const replyLikes = r.likeCount || 0;
-                    const fechaRespuesta = tiempoDesde(r.publishedAt);
-                    totalComentarios++; // respuesta
-
-                    const replyHTML = `
-                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
-                            <img src="${r.authorProfileImageUrl}" width="28" height="28" style="border-radius: 50%;">
-                            <span><strong style="font-size: 0.9em;">${r.authorDisplayName}</strong> · <span style="color:#888; font-size: 0.8em;">${fechaRespuesta}</span></span>
-                        </div>
-                        <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
-                        <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
-                            <img src="like.png" class="icono-like"> ${replyLikes} likes
-                        </p>
-                    `;
-                    const replyBlock = document.createElement("div");
-                    replyBlock.innerHTML = replyHTML;
-                    repliesDiv.appendChild(replyBlock);
-                });
-                div.appendChild(repliesDiv);
+            if (!data.items || data.items.length === 0) {
+                titulo.textContent = "0 comentarios";
+                contenedor.innerHTML += "<p>No hay comentarios disponibles.</p>";
+                return;
             }
-            contenedor.appendChild(div);
-        });
 
-        // Actualizamos el número en el título
-        titulo.textContent = `${totalComentarios} comentarios`;
+            data.items.forEach(item => {
+                const comment = item.snippet.topLevelComment.snippet;
+                const likeCount = comment.likeCount || 0;
+                const fechaTexto = tiempoDesde(comment.publishedAt);
+                totalComentarios++;
 
-    } catch (error) {
-        console.error("Error cargando comentarios:", error);
-        document.getElementById("comentarios").innerHTML = "<p>Error al cargar comentarios.</p>";
+                const div = document.createElement("div");
+                div.style.borderBottom = "1px solid #333";
+                div.style.margin = "1em 0";
+                div.style.paddingBottom = "1em";
+
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${comment.authorProfileImageUrl}" width="36" height="36" style="border-radius: 50%;">
+                        <div style="display: flex; flex-direction: column;">
+                            <span><strong>${comment.authorDisplayName}</strong> · <span style="color:#888; font-size: 0.85em;">${fechaTexto}</span></span>
+                        </div>
+                    </div>
+                    <p style="margin-left: 46px;">${comment.textDisplay}</p>
+                    <p style="margin-left: 46px; font-size: 0.85em; color: #ccc;">
+                        <img src="like2.png" class="icono-like"> ${likeCount}
+                    </p>
+                `;
+
+                if (item.replies && item.replies.comments.length > 0) {
+                    const repliesDiv = document.createElement("div");
+                    repliesDiv.style.marginLeft = "46px";
+                    repliesDiv.style.borderLeft = "2px solid #555";
+                    repliesDiv.style.paddingLeft = "10px";
+                    repliesDiv.style.marginTop = "0.5em";
+
+                    item.replies.comments.forEach(reply => {
+                        const r = reply.snippet;
+                        const replyLikes = r.likeCount || 0;
+                        const fechaRespuesta = tiempoDesde(r.publishedAt);
+                        totalComentarios++;
+
+                        const replyHTML = `
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                <img src="${r.authorProfileImageUrl}" width="28" height="28" style="border-radius: 50%;">
+                                <span><strong style="font-size: 0.9em;">${r.authorDisplayName}</strong> · <span style="color:#888; font-size: 0.8em;">${fechaRespuesta}</span></span>
+                            </div>
+                            <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
+                            <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
+                                <img src="like.png" class="icono-like"> ${replyLikes} likes
+                            </p>
+                        `;
+                        const replyBlock = document.createElement("div");
+                        replyBlock.innerHTML = replyHTML;
+                        repliesDiv.appendChild(replyBlock);
+                    });
+                    div.appendChild(repliesDiv);
+                }
+                contenedor.appendChild(div);
+            });
+
+            titulo.textContent = `${totalComentarios} comentarios`;
+
+        } catch (error) {
+            console.error("Error cargando comentarios:", error);
+            document.getElementById("comentarios").innerHTML = "<p>Error al cargar comentarios.</p>";
+        }
     }
-}
     
     function mostrarModalCompartir() {
         const urlActual = window.location.href;
@@ -401,70 +393,6 @@ async function cargarComentarios() {
             document.getElementById("mensajeCopiado").textContent = "Error al copiar.";
         }
     }
-
-// ----- SECCIÓN IPFS -----
-
-// Lista YT ↔ IPFS
-const videos = [
-  { yt: "https://www.youtube.com/live/44G840BDDG0?feature=shared", ipfs: "https://bafybeicuoqc7cogucnddesw53ehk57y54rzsgu2wj5mhzdnje3jisdnuou.ipfs.dweb.link?filename=2025-07-26%2001-01-45.mp4" },
-  { yt: "https://www.youtube.com/live/LBeSR2wXRFs?feature=shared", ipfs: "https://bafybeicuoqc7cogucnddesw53ehk57y54rzsgu2wj5mhzdnje3jisdnuou.ipfs.dweb.link?filename=2025-07-26%2001-01-45.mp4" }
-];
-
-videos.forEach(video => {
-  const contenedor = document.createElement("div");
-  contenedor.className = "video-container";
-
-  contenedor.innerHTML = `
-    <h2 id="titulo-${video.yt}">Cargando título...</h2>
-    <p id="likes-${video.yt}">Likes: —</p>
-
-    <video controls width="100%" poster="https://img.youtube.com/vi/${video.yt}/maxresdefault.jpg">
-      <source src="https://ipfs.io/ipfs/${video.ipfs}" type="video/mp4">
-      Tu navegador no soporta video HTML5.
-    </video>
-
-    <iframe 
-      class="mini-yt"
-      width="160" height="90"
-      src="https://www.youtube.com/embed/${video.yt}?autoplay=1&mute=1&playsinline=1"
-      frameborder="0"
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
-    </iframe>
-
-    <div id="comentarios-${video.yt}">
-      <h3>Comentarios</h3>
-      <p>Cargando comentarios...</p>
-    </div>
-  `;
-
-  document.getElementById("lista-videos").appendChild(contenedor);
-
-  // Datos YT
-  fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${video.yt}&key=${apiKey}`)
-    .then(r => r.json())
-    .then(data => {
-      if (data.items.length > 0) {
-        const info = data.items[0];
-        document.getElementById(`titulo-${video.yt}`).textContent = info.snippet.title;
-        document.getElementById(`likes-${video.yt}`).textContent = `Likes: ${info.statistics.likeCount}`;
-      }
-    });
-
-  // Comentarios YT
-  fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${video.yt}&maxResults=5&key=${apiKey}`)
-    .then(r => r.json())
-    .then(data => {
-      const comDiv = document.getElementById(`comentarios-${video.yt}`);
-      comDiv.innerHTML = `<h3>Comentarios (${data.pageInfo.totalResults})</h3>`;
-      data.items.forEach(item => {
-        const p = document.createElement("p");
-        p.textContent = item.snippet.topLevelComment.snippet.textDisplay;
-        comDiv.appendChild(p);
-      });
-    });
-});
-    
 </script>
     
 </body>
