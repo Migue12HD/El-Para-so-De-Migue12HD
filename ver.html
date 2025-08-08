@@ -152,6 +152,8 @@
         // Añade aquí todos los videos que quieras sustituir
     };
 
+const videoIPFS = videosIPFS[videoId];  // <-- ESTA LÍNEA FALTA
+    
 if (videoIPFS) {
     // Oculta miniatura y iframe YouTube
     document.getElementById("miniatura").style.display = "none";
