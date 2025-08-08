@@ -50,6 +50,21 @@
             margin-left: 12px;
             vertical-align: middle;
         }
+
+        .video-container {
+      position: relative;
+      max-width: 800px;
+      margin: 20px auto;
+      font-family: Arial, sans-serif;
+    }
+        .mini-yt {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      border: 2px solid #fff;
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
+    }
+        
     </style>
 </head>
 <body>
@@ -381,7 +396,70 @@ async function cargarComentarios() {
     }
 </script>
 
+<script>
+const apiKey = "AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE";
 
+// Lista YT ↔ IPFS
+const videos = [
+  { yt: "https://www.youtube.com/live/44G840BDDG0?feature=shared", ipfs: "https://bafybeicuoqc7cogucnddesw53ehk57y54rzsgu2wj5mhzdnje3jisdnuou.ipfs.dweb.link?filename=2025-07-26%2001-01-45.mp4" },
+  { yt: "VIDEO_ID_2", ipfs: "QmXXXXX2" }
+];
+
+videos.forEach(video => {
+  const contenedor = document.createElement("div");
+  contenedor.className = "video-container";
+
+  contenedor.innerHTML = `
+    <h2 id="titulo-${video.yt}">Cargando título...</h2>
+    <p id="likes-${video.yt}">Likes: —</p>
+
+    <video controls width="100%" poster="https://img.youtube.com/vi/${video.yt}/maxresdefault.jpg">
+      <source src="https://ipfs.io/ipfs/${video.ipfs}" type="video/mp4">
+      Tu navegador no soporta video HTML5.
+    </video>
+
+    <iframe 
+      class="mini-yt"
+      width="160" height="90"
+      src="https://www.youtube.com/embed/${video.yt}?autoplay=1&mute=1&playsinline=1"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+
+    <div id="comentarios-${video.yt}">
+      <h3>Comentarios</h3>
+      <p>Cargando comentarios...</p>
+    </div>
+  `;
+
+  document.getElementById("lista-videos").appendChild(contenedor);
+
+  // Datos YT
+  fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${video.yt}&key=${apiKey}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.items.length > 0) {
+        const info = data.items[0];
+        document.getElementById(`titulo-${video.yt}`).textContent = info.snippet.title;
+        document.getElementById(`likes-${video.yt}`).textContent = `Likes: ${info.statistics.likeCount}`;
+      }
+    });
+
+  // Comentarios YT
+  fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${video.yt}&maxResults=5&key=${apiKey}`)
+    .then(r => r.json())
+    .then(data => {
+      const comDiv = document.getElementById(`comentarios-${video.yt}`);
+      comDiv.innerHTML = `<h3>Comentarios (${data.pageInfo.totalResults})</h3>`;
+      data.items.forEach(item => {
+        const p = document.createElement("p");
+        p.textContent = item.snippet.topLevelComment.snippet.textDisplay;
+        comDiv.appendChild(p);
+      });
+    });
+});
+</script>
     
 </body>
 </html>
