@@ -146,25 +146,47 @@
     const params = new URLSearchParams(window.location.search);
     const videoId = params.get("v");
 
-    if (videoId) {
-        // Cargar la miniatura limpia de YouTube
-        const miniatura = document.getElementById("miniatura");
-        miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-        miniatura.alt = "Miniatura limpia del video";
-        
-        // Evento clic para reemplazar la miniatura por el iframe con autoplay
-        miniatura.addEventListener("click", () => {
-            miniatura.style.display = "none";
-            const iframe = document.getElementById("player");
-            iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
-            iframe.style.display = "block";
-        });
+    // Define aquí tus videos con versión IPFS: videoId -> URL IPFS
+    const videosIPFS = {
+        // Ejemplo: "abc123": "https://ipfs.io/ipfs/QmHashVideo1.mp4",
+        // Añade aquí todos los videos que quieras sustituir
+    };
 
-        // Carga los datos del video y canal
-        cargarTitulo();
-        cargarInfoCanal();
-        cargarLikesDislikes();
-        cargarComentarios();
+    if (videoId) {
+        const videoIPFS = videosIPFS[videoId];
+        if (videoIPFS) {
+            // Mostrar video IPFS reemplazando contenido dentro del contenedor principal
+            const container = document.querySelector(".container");
+            container.innerHTML = `
+                <video id="ipfsPlayer" controls autoplay style="width:100%; height:560px; background:black;">
+                    <source src="${videoIPFS}" type="video/mp4">
+                    Tu navegador no soporta video HTML5.
+                </video>
+            `;
+            // Opcional: si quieres, aquí puedes cargar título, canal, likes y comentarios igual que abajo
+            // Si no, solo video IPFS
+        } else {
+            // Código original para mostrar miniatura, iframe, cargar título, canal, likes y comentarios
+
+            // Cargar la miniatura limpia de YouTube
+            const miniatura = document.getElementById("miniatura");
+            miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+            miniatura.alt = "Miniatura limpia del video";
+
+            // Evento clic para reemplazar la miniatura por el iframe con autoplay
+            miniatura.addEventListener("click", () => {
+                miniatura.style.display = "none";
+                const iframe = document.getElementById("player");
+                iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
+                iframe.style.display = "block";
+            });
+
+            // Carga los datos del video y canal
+            cargarTitulo();
+            cargarInfoCanal();
+            cargarLikesDislikes();
+            cargarComentarios();
+        }
     } else {
         console.warn("No se encontró el parámetro ?v en la URL.");
     }
@@ -198,7 +220,6 @@
                 const stats = data.items[0].statistics;
                 document.getElementById("tituloVideo").textContent = info.title;
 
-                // Guardamos variables reutilizables
                 const vistas = Number(stats.viewCount).toLocaleString("es-ES");
                 const fechaOriginal = new Date(info.publishedAt);
                 const fechaFormateada = fechaOriginal.toLocaleDateString("es-ES", {
@@ -209,10 +230,8 @@
                 const fechaTexto = tiempoDesde(info.publishedAt);
                 const metaElem = document.getElementById("metaVideo");
 
-                // Mostrar inicialmente con "hace X tiempo"
                 metaElem.textContent = `${vistas} visualizaciones  ${fechaTexto}`;
 
-                // Descripción
                 const descElem = document.getElementById("descripcionVideo");
                 const toggleElem = document.getElementById("toggleDescripcion");
                 descElem.textContent = info.description;
@@ -227,14 +246,12 @@
                             descElem.style.display = "block";
                             descElem.style.webkitLineClamp = "unset";
                             toggleElem.textContent = "menos";
-                            // Mostrar fecha original
                             metaElem.textContent = `${vistas} visualizaciones  ${fechaFormateada}`;
                         } else {
                             descElem.style.overflow = "hidden";
                             descElem.style.display = "-webkit-box";
                             descElem.style.webkitLineClamp = "3";
                             toggleElem.textContent = "más";
-                            // Volver a "hace X tiempo"
                             metaElem.textContent = `${vistas} visualizaciones  ${fechaTexto}`;
                         }
                     };
@@ -370,7 +387,7 @@
             document.getElementById("comentarios").innerHTML = "<p>Error al cargar comentarios.</p>";
         }
     }
-    
+
     function mostrarModalCompartir() {
         const urlActual = window.location.href;
         document.getElementById("enlaceCompartir").value = urlActual;
@@ -394,6 +411,7 @@
         }
     }
 </script>
+
     
 </body>
 </html>
