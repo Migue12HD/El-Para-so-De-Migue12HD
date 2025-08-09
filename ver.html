@@ -22,18 +22,16 @@
             height: 560px;
             border: none;
             margin-bottom: 1rem;
-            background: black;
-        }
-        #player, #miniatura {
             display: block;
-        }
-        #ipfsPlayer {
-            display: none;
             background: black;
         }
         #miniatura {
             cursor: pointer;
             object-fit: contain;
+        }
+        #ipfsPlayer {
+            display: none;
+            background: black;
         }
         h2, h3 {
             margin-top: 0;
@@ -102,6 +100,7 @@
                 />
             </div>
         </div>
+
 
         <hr style="width: 100%; max-width: 100%; height: 1px; background-color: gray; border: none; margin: 10px 0;" />
 
@@ -273,8 +272,8 @@
                 cargarTodo();
             }
         }
+        // --- Funciones para cargar datos ---
 
-        // Funciones de carga (título, canal, likes, comentarios) siguen igual:
         function tiempoDesde(fechaISO) {
             const ahora = new Date();
             const fecha = new Date(fechaISO);
@@ -304,18 +303,20 @@
                     const stats = data.items[0].statistics;
                     document.getElementById('tituloVideo').textContent = info.title;
 
+                    // Variables reutilizables
                     const vistas = Number(stats.viewCount).toLocaleString('es-ES');
                     const fechaOriginal = new Date(info.publishedAt);
                     const fechaFormateada = fechaOriginal.toLocaleDateString('es-ES', {
                         year: 'numeric',
                         month: 'short',
-                        day: 'numeric'
+                        day: 'numeric',
                     });
                     const fechaTexto = tiempoDesde(info.publishedAt);
                     const metaElem = document.getElementById('metaVideo');
 
                     metaElem.textContent = `${vistas} visualizaciones  ${fechaTexto}`;
 
+                    // Descripción
                     const descElem = document.getElementById('descripcionVideo');
                     const toggleElem = document.getElementById('toggleDescripcion');
                     descElem.textContent = info.description;
@@ -363,46 +364,121 @@
                     document.getElementById('fotoPerfil').src = canal.thumbnails.default.url;
                     document.getElementById('nombreCanal').textContent = canal.title;
                 } else {
-                    document.getElementById('fotoPerfil').src = '';
-                    document.getElementById('nombreCanal').textContent = '';
+                    document.getElementById('nombreCanal').textContent = 'Canal no encontrado';
                 }
             } catch (error) {
-                console.error('Error al cargar info del canal:', error);
+                console.error('Error al cargar canal:', error);
+                document.getElementById('nombreCanal').textContent = 'Error al cargar canal';
             }
         }
 
         async function cargarLikesDislikes() {
-            // Para simplificar, solo likes, no dislikes porque API no da dislikes.
-            const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${apiKey}`;
+            const urlOriginal = `https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
+            const urlProxied = `https://api.allorigins.win/get?url=${encodeURIComponent(urlOriginal)}`;
+
             try {
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.items && data.items.length > 0) {
-                    const stats = data.items[0].statistics;
-                    document.getElementById('likeCount').textContent = stats.likeCount ? Number(stats.likeCount).toLocaleString('es-ES') : '?';
-                    // Dislikes no disponibles oficialmente
-                    document.getElementById('dislikeCount').textContent = '?';
-                } else {
-                    document.getElementById('likeCount').textContent = '?';
-                    document.getElementById('dislikeCount').textContent = '?';
-                }
+                const res = await fetch(urlProxied);
+                const dataWrapped = await res.json();
+                const data = JSON.parse(dataWrapped.contents);
+
+                document.getElementById('likeCount').textContent = Number.isInteger(data.likes) ? data.likes : '?';
+                document.getElementById('dislikeCount').textContent = Number.isInteger(data.dislikes) ? data.dislikes : '?';
             } catch (error) {
-                console.error('Error al cargar likes:', error);
+                console.error('Error al cargar likes/dislikes:', error);
                 document.getElementById('likeCount').textContent = '?';
                 document.getElementById('dislikeCount').textContent = '?';
             }
         }
 
         async function cargarComentarios() {
-            // Para simplificar, sin paginación ni carga real, solo mensaje estático
-            document.getElementById('comentarios-titulo').textContent = 'Comentarios deshabilitados';
-            document.getElementById('comentarios-cargando').textContent = '';
+            const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet,replies&videoId=${videoId}&key=${apiKey}&maxResults=20`;
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+
+                const contenedor = document.getElementById('comentarios');
+                const titulo = document.getElementById('comentarios-titulo');
+                const cargando = document.getElementById('comentarios-cargando');
+                if (cargando) contenedor.removeChild(cargando);
+
+                let totalComentarios = 0;
+
+                if (!data.items || data.items.length === 0) {
+                    titulo.textContent = '0 comentarios';
+                    contenedor.innerHTML += '<p>No hay comentarios disponibles.</p>';
+                    return;
+                }
+
+                data.items.forEach((item) => {
+                    const comment = item.snippet.topLevelComment.snippet;
+                    const likeCount = comment.likeCount || 0;
+                    const fechaTexto = tiempoDesde(comment.publishedAt);
+                    totalComentarios++;
+
+                    const div = document.createElement('div');
+                    div.style.borderBottom = '1px solid #333';
+                    div.style.margin = '1em 0';
+                    div.style.paddingBottom = '1em';
+
+                    div.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <img src="${comment.authorProfileImageUrl}" width="36" height="36" style="border-radius: 50%;" />
+                            <div style="display: flex; flex-direction: column;">
+                                <span><strong>${comment.authorDisplayName}</strong> · <span style="color:#888; font-size: 0.85em;">${fechaTexto}</span></span>
+                            </div>
+                        </div>
+                        <p style="margin-left: 46px;">${comment.textDisplay}</p>
+                        <p style="margin-left: 46px; font-size: 0.85em; color: #ccc;">
+                            <img src="like2.png" class="icono-like" /> ${likeCount}
+                        </p>
+                    `;
+
+                    if (item.replies && item.replies.comments.length > 0) {
+                        const repliesDiv = document.createElement('div');
+                        repliesDiv.style.marginLeft = '46px';
+                        repliesDiv.style.borderLeft = '2px solid #555';
+                        repliesDiv.style.paddingLeft = '10px';
+                        repliesDiv.style.marginTop = '0.5em';
+
+                        item.replies.comments.forEach((reply) => {
+                            const r = reply.snippet;
+                            const replyLikes = r.likeCount || 0;
+                            const fechaRespuesta = tiempoDesde(r.publishedAt);
+                            totalComentarios++;
+
+                            const replyHTML = `
+                                <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                    <img src="${r.authorProfileImageUrl}" width="28" height="28" style="border-radius: 50%;" />
+                                    <span><strong style="font-size: 0.9em;">${r.authorDisplayName}</strong> · <span style="color:#888; font-size: 0.8em;">${fechaRespuesta}</span></span>
+                                </div>
+                                <p style="margin-left: 36px; font-size: 0.9em;">${r.textDisplay}</p>
+                                <p style="margin-left: 36px; font-size: 0.75em; color: #ccc;">
+                                    <img src="like.png" class="icono-like" /> ${replyLikes} likes
+                                </p>
+                            `;
+                            const replyBlock = document.createElement('div');
+                            replyBlock.innerHTML = replyHTML;
+                            repliesDiv.appendChild(replyBlock);
+                        });
+                        div.appendChild(repliesDiv);
+                    }
+
+                    contenedor.appendChild(div);
+                });
+
+                titulo.textContent = `${totalComentarios} comentarios`;
+            } catch (error) {
+                console.error('Error cargando comentarios:', error);
+                document.getElementById('comentarios').innerHTML = '<p>Error al cargar comentarios.</p>';
+            }
         }
 
+        // Modal compartir
         function mostrarModalCompartir() {
-            document.getElementById('modalCompartir').style.display = 'flex';
-            document.getElementById('enlaceCompartir').value = window.location.href;
+            const urlActual = window.location.href;
+            document.getElementById('enlaceCompartir').value = urlActual;
             document.getElementById('mensajeCopiado').textContent = '';
+            document.getElementById('modalCompartir').style.display = 'flex';
         }
 
         function cerrarModalCompartir() {
@@ -410,11 +486,15 @@
         }
 
         function copiarEnlace() {
-            const enlace = document.getElementById('enlaceCompartir');
-            enlace.select();
-            enlace.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(enlace.value);
-            document.getElementById('mensajeCopiado').textContent = 'Enlace copiado al portapapeles.';
+            const input = document.getElementById('enlaceCompartir');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            try {
+                const copiado = document.execCommand('copy');
+                document.getElementById('mensajeCopiado').textContent = copiado ? '¡Copiado!' : 'No se pudo copiar.';
+            } catch (err) {
+                document.getElementById('mensajeCopiado').textContent = 'Error al copiar.';
+            }
         }
     </script>
 </body>
