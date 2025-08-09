@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
-            background-color: black;
+            backgroun      d-color: black;
             color: white;
             font-family: Roboto, sans-serif;
             margin: 0;
@@ -140,6 +140,8 @@ const iframe = document.getElementById("player");
 const ipfsPlayer = document.getElementById("ipfsPlayer");
 const miniatura = document.getElementById("miniatura");
 
+// ¿IPFS O YT?
+    
 if (!videoId) {
   console.warn("No se encontró el parámetro ?v en la URL.");
   // Opcional: mostrar mensaje de error en UI
@@ -195,6 +197,8 @@ function tiempoDesde(fechaISO) {
     if (minutos >= 1) return `hace ${minutos} minuto${minutos > 1 ? 's' : ''}`;
     return `hace ${segundos} segundo${segundos > 1 ? 's' : ''}`;
 }
+
+// FUNCIONES.
 
 async function cargarTitulo() {
     const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${apiKey}`;
