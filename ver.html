@@ -143,23 +143,24 @@
 <script>
     const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
     const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
-    const params = new URLSearchParams(window.location.search);
-    const videoId = params.get("v");
+// === 1. Obtener ID del video desde la URL ===
+const params = new URLSearchParams(window.location.search);
+const videoId = params.get("v");
 
-    // Define aquí tus videos con versión IPFS: videoId -> URL IPFS
-    const videosIPFS = {
-        "44G840BDDG0": "https://bafybeicuoqc7cogucnddesw53ehk57y54rzsgu2wj5mhzdnje3jisdnuou.ipfs.dweb.link?filename=2025-07-26%2001-01-45.mp4",
-        // Añade aquí todos los videos que quieras sustituir
-    };
+// === 2. Lista de videos IPFS: videoId -> URL IPFS ===
+const videosIPFS = {
+    "44G840BDDG0": "https://bafybeicuoqc7cogucnddesw53ehk57y54rzsgu2wj5mhzdnje3jisdnuou.ipfs.dweb.link?filename=2025-07-26%2001-01-45.mp4",
+    // Agrega aquí más videos si quieres
+};
 
-const videoIPFS = videosIPFS[videoId];  // <-- ESTA LÍNEA FALTA
-    
+// === 3. Detectar si el video tiene versión IPFS ===
+const videoIPFS = videosIPFS[videoId];
+
 if (videoIPFS) {
-    // Oculta miniatura y iframe YouTube
+    // ---- Mostrar video IPFS ----
     document.getElementById("miniatura").style.display = "none";
     document.getElementById("player").style.display = "none";
 
-    // Configura y muestra video IPFS
     const ipfsPlayer = document.getElementById("ipfsPlayer");
     const ipfsSource = document.getElementById("ipfsSource");
 
@@ -167,36 +168,38 @@ if (videoIPFS) {
     ipfsPlayer.load();
     ipfsPlayer.style.display = "block";
 
-    // Carga datos de video normalmente
+    // Cargar datos de video normalmente
     cargarTitulo();
     cargarInfoCanal();
     cargarLikesDislikes();
     cargarComentarios();
-    } else {
-        // Código original para YouTube normal
-        const miniatura = document.getElementById("miniatura");
-        miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-        miniatura.alt = "Miniatura limpia del video";
 
-        miniatura.style.display = "block";
-        const iframe = document.getElementById("player");
-        iframe.style.display = "none";
-        
-        miniatura.addEventListener("click", () => {
-            miniatura.style.display = "none";
-            iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
-            iframe.style.display = "block";
-        });
-
-        cargarTitulo();
-        cargarInfoCanal();
-        cargarLikesDislikes();
-        cargarComentarios();
-    }
 } else {
-    console.warn("No se encontró el parámetro ?v en la URL.");
-}
+    // ---- Código original de YouTube ----
 
+    // Cargar miniatura
+    document.getElementById("miniatura").src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+
+    // Configurar reproductor YouTube
+    const player = document.createElement("iframe");
+    player.id = "player";
+    player.width = "100%";
+    player.height = "560";
+    player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+    player.frameBorder = "0";
+    player.allow =
+        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+    player.allowFullscreen = true;
+
+    // Insertar en la página
+    document.getElementById("miniatura").insertAdjacentElement("afterend", player);
+
+    // Cargar datos
+    cargarTitulo();
+    cargarInfoCanal();
+    cargarLikesDislikes();
+    cargarComentarios();
+}
 
     function tiempoDesde(fechaISO) {
         const ahora = new Date();
