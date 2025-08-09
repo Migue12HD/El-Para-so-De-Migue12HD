@@ -133,39 +133,56 @@ const videoId = params.get("v");
 
 const videosIPFS = {
   '44G840BDDG0': 'https://ipfs.io/ipns/k51qzi5uqu5dlw6pzjxcnxn43xbatrro7we335hqhcuste5tgrq9g7ilgo66p4',
-  // Otros videos IPFS en formato URL HTTP/IPFS gateway aquí
+  // añade aquí más videos IPFS si quieres
 };
 
-const miniatura = document.getElementById("miniatura");
-const iframe = document.getElementById("player");
-let ipfsPlayer; // lo crearás sólo si es necesario
+if (videoId) {
+    const miniatura = document.getElementById("miniatura");
+    const iframe = document.getElementById("player");
+    const ipfsPlayer = document.getElementById("ipfsPlayer"); // Si usas <video> IPFS, o null si no tienes
+    
+    // Carga la miniatura limpia de YouTube siempre
+    miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    miniatura.alt = "Miniatura limpia del video";
+    miniatura.style.display = "block";
 
-miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-miniatura.alt = "Miniatura limpia del video";
+    // Oculta iframe e ipfsPlayer al principio
+    iframe.style.display = "none";
+    if(ipfsPlayer) ipfsPlayer.style.display = "none";
 
-miniatura.addEventListener("click", () => {
-    miniatura.style.display = "none";
+    // Evento clic en la miniatura: reproducir video desde IPFS o YouTube según corresponda
+    miniatura.onclick = () => {
+        miniatura.style.display = "none";
 
-    if (videosIPFS.hasOwnProperty(videoId)) {
-        // Mostrar video IPFS usando etiqueta <video>
-        if (!ipfsPlayer) {
-            ipfsPlayer = document.createElement("video");
-            ipfsPlayer.setAttribute("controls", "true");
-            ipfsPlayer.style.width = "100%";
-            ipfsPlayer.style.height = "560px";
-            document.querySelector(".container").insertBefore(ipfsPlayer, iframe);
+        if (videosIPFS.hasOwnProperty(videoId)) {
+            // Video IPFS
+            if(!ipfsPlayer) {
+                console.error("No se encontró el elemento ipfsPlayer para reproducir video IPFS.");
+                return;
+            }
+            const ipfsURL = videosIPFS[videoId].replace('ipfs://', 'https://ipfs.io/ipfs/');
+            iframe.style.display = "none";
+            ipfsPlayer.src = ipfsURL;
+            ipfsPlayer.style.display = "block";
+            ipfsPlayer.load();
+            ipfsPlayer.play().catch(() => {});
+        } else {
+            // Video YouTube normal
+            if(ipfsPlayer) ipfsPlayer.style.display = "none";
+            iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
+            iframe.style.display = "block";
         }
-        ipfsPlayer.src = videosIPFS[videoId];
-        ipfsPlayer.style.display = "block";
-        ipfsPlayer.play().catch(() => {});
-        iframe.style.display = "none";
-    } else {
-        // Video YouTube normal (iframe)
-        iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
-        iframe.style.display = "block";
-        if(ipfsPlayer) ipfsPlayer.style.display = "none";
-    }
-});
+    };
+
+    // Siempre carga los datos, independientemente del origen del video
+    cargarTitulo();
+    cargarInfoCanal();
+    cargarLikesDislikes();
+    cargarComentarios();
+
+} else {
+    console.warn("No se encontró el parámetro ?v en la URL.");
+}
 
 function tiempoDesde(fechaISO) {
     const ahora = new Date();
