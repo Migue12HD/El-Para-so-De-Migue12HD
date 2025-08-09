@@ -127,46 +127,54 @@
 <script>
 const canalID = 'UC72clDqtrpYOpQT5eUriGfw';
 const apiKey = 'AIzaSyBqoYOZvN-i9vJS_pbeizOxXtJowcvWprE';
+
 const params = new URLSearchParams(window.location.search);
 const videoId = params.get("v");
 
 const videosIPFS = {
   '44G840BDDG0': 'https://ipfs.io/ipns/k51qzi5uqu5dlw6pzjxcnxn43xbatrro7we335hqhcuste5tgrq9g7ilgo66p4',
-  // Tus videos IPFS
+  // Otros videos IPFS en formato URL HTTP/IPFS gateway aquí
 };
 
 const iframe = document.getElementById("player");
 const ipfsPlayer = document.getElementById("ipfsPlayer");
 const miniatura = document.getElementById("miniatura");
 
-if (videosIPFS.hasOwnProperty(videoId)) {
-  // Video IPFS
-  const ipfsHash = videosIPFS[videoId];
-  const ipfsURL = ipfsHash.replace('ipfs://', 'https://ipfs.io/ipfs/');
-  
-  iframe.style.display = "none";
-  miniatura.style.display = "none";
-
-  ipfsPlayer.src = ipfsURL;
-  ipfsPlayer.style.display = "block";
-  ipfsPlayer.load();
-  ipfsPlayer.play().catch(() => {});
-  
+if (!videoId) {
+  console.warn("No se encontró el parámetro ?v en la URL.");
+  // Opcional: mostrar mensaje de error en UI
 } else {
-  // Video YouTube normal
-  ipfsPlayer.style.display = "none";
+  try {
+    if (videosIPFS.hasOwnProperty(videoId)) {
+      // Video IPFS: la URL ya está en formato HTTP, no hace falta reemplazar
+      const ipfsURL = videosIPFS[videoId];
 
-  miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-  miniatura.style.display = "block";
-  miniatura.alt = "Miniatura limpia del video";
-  
-  iframe.style.display = "none"; // oculto al principio
+      iframe.style.display = "none";
+      miniatura.style.display = "none";
 
-  miniatura.onclick = () => {
-    miniatura.style.display = "none";
-    iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
-    iframe.style.display = "block";
-  };
+      ipfsPlayer.src = ipfsURL;
+      ipfsPlayer.style.display = "block";
+      ipfsPlayer.load();
+      ipfsPlayer.play().catch(() => {});
+    } else {
+      // Video YouTube normal
+      ipfsPlayer.style.display = "none";
+
+      miniatura.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+      miniatura.style.display = "block";
+      miniatura.alt = "Miniatura limpia del video";
+
+      iframe.style.display = "none"; // oculto al principio
+
+      miniatura.onclick = () => {
+        miniatura.style.display = "none";
+        iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1`;
+        iframe.style.display = "block";
+      };
+    }
+  } catch (error) {
+    console.error("Error cargando el video:", error);
+  }
 }
 
 function tiempoDesde(fechaISO) {
